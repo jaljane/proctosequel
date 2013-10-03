@@ -54,14 +54,14 @@ public class ProgTreeHelper {
     
     public static void main(String[] args){
 //        try {
-//            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\antlrsample\\src\\java\\org\\proctosequal\\dummy.txt"));
+//            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\antlrsample\\src\\java\\org\\ProcToSequel\\dummy.txt"));
 //            System.out.println(progToLowerCase(content));
 //        } catch (IOException ex) {
 //            Logger.getLogger(ProgTreeHelper.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         
         try {
-            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\antlrsample\\src\\java\\org\\proctosequal\\dummy_1.txt"));
+            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\antlrsample\\src\\java\\org\\ProcToSequel\\dummy_1.txt"));
            Map<String, String> map = new LinkedHashMap<String, String>();
             
             System.out.println(storeLitteral(content, 1, map, '"'));

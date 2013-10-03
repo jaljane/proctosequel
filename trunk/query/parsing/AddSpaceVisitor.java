@@ -5,13 +5,13 @@
 package org.proctosequel.query.parsing;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.proctosequel.antlr.ProcToSequalGrammarBaseVisitor;
+import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
 
 /**
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class AddSpaceVisitor extends  ProcToSequalGrammarBaseVisitor{
+public class AddSpaceVisitor extends  ProcToSequelGrammarBaseVisitor{
 
     
     private String query = "";

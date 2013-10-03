@@ -6,8 +6,8 @@ package org.proctosequel.query.commands;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.proctosequel.antlr.ProcToSequalGrammarParser;
-import org.proctosequel.antlr.ProcToSequalGrammarParser.InstContext;
+import org.proctosequel.antlr.ProcToSequelGrammarParser;
+import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.query.exception.SemanticsError;
 import org.proctosequel.query.exception.SyntaxError;
 import org.proctosequel.query.om.Query;
@@ -21,9 +21,9 @@ import org.proctosequel.query.utils.Errors;
 public class ReadQueriesCommand  implements Command {
     
     private Map<String, Query> queries = new LinkedHashMap<>();
-    private ProcToSequalGrammarParser.ProgContext progTree;
+    private ProcToSequelGrammarParser.ProgContext progTree;
 
-    public ReadQueriesCommand(ProcToSequalGrammarParser.ProgContext progTree) {
+    public ReadQueriesCommand(ProcToSequelGrammarParser.ProgContext progTree) {
         this.progTree = progTree;
     }
     
@@ -31,7 +31,7 @@ public class ReadQueriesCommand  implements Command {
         for(InstContext instContext : progTree.inst()){
             // get sql part trees.
             if (instContext.setvar()!= null && !instContext.setvar().isEmpty()){
-                ProcToSequalGrammarParser.SelectStmtContext selectStmtContext = instContext.setvar().selectStmt();
+                ProcToSequelGrammarParser.SelectStmtContext selectStmtContext = instContext.setvar().selectStmt();
                 if(selectStmtContext==null || selectStmtContext.isEmpty()){
                     throw new SyntaxError(instContext.setvar().VarName().getText(), Errors.set_var_error_msg);
                 }
@@ -133,7 +133,7 @@ public class ReadQueriesCommand  implements Command {
     /**
      * @return the progTree
      */
-    public ProcToSequalGrammarParser.ProgContext getProgTree() {
+    public ProcToSequelGrammarParser.ProgContext getProgTree() {
         return progTree;
     }
     

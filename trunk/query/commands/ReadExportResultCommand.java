@@ -6,8 +6,8 @@ package org.proctosequel.query.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.proctosequel.antlr.ProcToSequalGrammarParser;
-import org.proctosequel.antlr.ProcToSequalGrammarParser.InstContext;
+import org.proctosequel.antlr.ProcToSequelGrammarParser;
+import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.query.om.ExportResult;
 
 /**
@@ -18,9 +18,9 @@ public class ReadExportResultCommand  implements Command{
     
     private List<ExportResult> exportResult = new ArrayList<>();
     
-    private ProcToSequalGrammarParser.ProgContext progTree;
+    private ProcToSequelGrammarParser.ProgContext progTree;
 
-    public ReadExportResultCommand(ProcToSequalGrammarParser.ProgContext progTree) {
+    public ReadExportResultCommand(ProcToSequelGrammarParser.ProgContext progTree) {
         this.progTree = progTree;
     }
     
@@ -37,7 +37,7 @@ public class ReadExportResultCommand  implements Command{
     /**
      * @return the progTree
      */
-    public ProcToSequalGrammarParser.ProgContext getProgTree() {
+    public ProcToSequelGrammarParser.ProgContext getProgTree() {
         return progTree;
     }
 

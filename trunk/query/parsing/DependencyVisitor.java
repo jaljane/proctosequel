@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.proctosequel.antlr.ProcToSequalGrammarBaseVisitor;
+import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
 
 /**
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class DependencyVisitor extends ProcToSequalGrammarBaseVisitor{
+public class DependencyVisitor extends ProcToSequelGrammarBaseVisitor{
 
     private List<String> dependencies = new ArrayList<>();
     

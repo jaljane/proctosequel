@@ -8,8 +8,8 @@ import java.io.File;
 import java.io.StringReader;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.proctosequel.antlr.ProcToSequalGrammarLexer;
-import org.proctosequel.antlr.ProcToSequalGrammarParser;
+import org.proctosequel.antlr.ProcToSequelGrammarLexer;
+import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.query.commands.ReadQueriesCommand;
 import org.proctosequel.query.utils.ProgTreeHelper;
 import org.proctosequel.utils.FileHelper;
@@ -36,15 +36,15 @@ public class ProceduraltoSequal {
 //            ANTLRInputStream input = new ANTLRInputStream(new StringReader("hh=\"i ( $jkhf\n" +
 //"d;l(;ld\" "));
             // create a lexer that feeds off of input CharStream
-            ProcToSequalGrammarLexer lexer = new ProcToSequalGrammarLexer(input);
+            ProcToSequelGrammarLexer lexer = new ProcToSequelGrammarLexer(input);
             
             // create a buffer of tokens pulled from the lexer
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
             // create a parser that feeds off the buffer
-            ProcToSequalGrammarParser parser = new ProcToSequalGrammarParser(tokens);
+            ProcToSequelGrammarParser parser = new ProcToSequelGrammarParser(tokens);
             parser.setBuildParseTree(true);
-            ProcToSequalGrammarParser.ProgContext tree = parser.prog();
+            ProcToSequelGrammarParser.ProgContext tree = parser.prog();
             ReadQueriesCommand readQueriesCommand = new ReadQueriesCommand(tree);
             readQueriesCommand.execute();
             tree.inspect(parser);
