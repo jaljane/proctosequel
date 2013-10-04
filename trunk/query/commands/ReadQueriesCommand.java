@@ -12,6 +12,7 @@ import org.proctosequel.query.exception.SemanticsError;
 import org.proctosequel.query.exception.SyntaxError;
 import org.proctosequel.query.om.Query;
 import org.proctosequel.query.parsing.DependencyVisitor;
+import org.proctosequel.query.parsing.GetColumnsVisitor;
 import org.proctosequel.query.utils.Errors;
 
 /**
@@ -120,6 +121,17 @@ public class ReadQueriesCommand  implements Command {
                 }
             }
         }
+        
+        // get Dependencies
+        for(Query query : queries.values()){
+            GetColumnsVisitor getColumnsVisitor = new GetColumnsVisitor();
+            getColumnsVisitor.visit(query.getSelectPart());
+            for(String column : getColumnsVisitor.getColumns()){
+                query.getColumns().put(column, column);
+            }
+            
+        }        
+        
         System.out.println(queries);
     }
 

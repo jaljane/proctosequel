@@ -19,7 +19,7 @@ public class AddSpaceVisitor extends  ProcToSequelGrammarBaseVisitor{
     @Override
     public Object visitTerminal(TerminalNode tn) {
         query += " " + tn.getText();
-        return super.visitTerminal(tn); //To change body of generated methods, choose Tools | Templates.
+         return null;
     }
 
     /**

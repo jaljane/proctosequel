@@ -5,7 +5,9 @@
 package org.proctosequel.query.om;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.proctosequel.query.parsing.AddSpaceVisitor;
 
@@ -19,6 +21,7 @@ public class Query {
     private ParseTree fromPart;
     private ParseTree wherePart;
     private ParseTree groupPart;
+    private Map<String, String> columns = new LinkedHashMap<>();
     private List<Query> dependsOn = new ArrayList<>();
     /**
      * @return the identifier
@@ -98,6 +101,20 @@ public class Query {
         return dependsOn;
     }
 
+
+    /**
+     * @return the columns
+     */
+    public Map<String, String> getColumns() {
+        return columns;
+    }
+
+    /**
+     * @param columns the columns to set
+     */
+    public void setColumns(Map<String, String> columns) {
+        this.columns = columns;
+    }    
     /**
      * @param dependsOn the dependsOn to set
      */
@@ -132,6 +149,7 @@ public class Query {
 
         return result; //To change body of generated methods, choose Tools | Templates.
     }
+
 
     
    

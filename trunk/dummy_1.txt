@@ -1,3 +1,11 @@
-sldf;slkdf "dkfokdkkd\
-dlld   
-f odf" s;dfjksljdf "jjdd\"ddddj"
+ $sample := SELECT 
+* from table where 
+  select (select beauty, 
+ warm,dd, intelligence (kljsf, s_hdy) 
+from chiraz(:gg,ff(tod:kk,gg(ii,uu/ii))) group by hh.ii,ujs) 
+from totfromo , hhh:ldlld 
+where to_ hh >= 'i ( $jkHT
+d;\'l(;l knskdfj ld'  ;
+$sample2 := sElect $sample , krkri from toto where ss=:uu and bb=$sample:dd group by ch1,ch2,ch3;
+$sample3 := select col1, col2, col3 from table1, table2, $sample2 where jj:kk = ll:jj and (hh=0 or (uu=6 and kk=9)) ;
+ExporTQuery($sample2);exportResult($sample2) to sample3 primaryKey ($ll,kkk);

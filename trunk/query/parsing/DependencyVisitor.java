@@ -26,7 +26,7 @@ public class DependencyVisitor extends ProcToSequelGrammarBaseVisitor{
                 getDependencies().add(tn.getText());
             }
         }
-        return super.visitTerminal(tn);
+        return null;
     }
 
     /**
