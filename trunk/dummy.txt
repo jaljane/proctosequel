@@ -1,1 +1,0 @@
- $sample := select (select * from gg), expr(hh(yy,oo)), uu, er(kkf) from hht;
