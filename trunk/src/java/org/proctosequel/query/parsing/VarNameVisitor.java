@@ -28,7 +28,7 @@ public class VarNameVisitor extends ProcToSequelGrammarBaseVisitor{
     }
 
     /**
-     * @return the dependencies
+     * @return the varnames
      */
     public List<String> getVarNames() {
         return varnames;
