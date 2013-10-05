@@ -10,6 +10,8 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
+import org.proctosequel.query.commands.ReadExportQueryCommand;
+import org.proctosequel.query.commands.ReadExportResultCommand;
 import org.proctosequel.query.commands.ReadQueriesCommand;
 import org.proctosequel.query.utils.ProgTreeHelper;
 import org.proctosequel.utils.FileHelper;
@@ -27,7 +29,7 @@ public class ProceduraltoSequal {
 
         try{
                         // create a CharStream that reads from standard input
-            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\proctosequel\\src\\java\\org\\proctosequel\\dummy.txt"));
+            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\proctosequel\\src\\java\\org\\proctosequel\\dummy_1.txt"));
                     
             content= ProgTreeHelper.progToLowerCase(content);
             
@@ -45,9 +47,16 @@ public class ProceduraltoSequal {
             ProcToSequelGrammarParser parser = new ProcToSequelGrammarParser(tokens);
             parser.setBuildParseTree(true);
             ProcToSequelGrammarParser.ProgContext tree = parser.prog();
+            System.out.println("-------------------------------ReadQueriesCommand---------------------------------------");
             ReadQueriesCommand readQueriesCommand = new ReadQueriesCommand(tree);
             readQueriesCommand.execute();
-            tree.inspect(parser);
+            System.out.println("-------------------------------ReadExportQueryCommand---------------------------------------");
+            ReadExportQueryCommand readExportQueryCommand = new ReadExportQueryCommand(tree);
+            readExportQueryCommand.execute();            
+            System.out.println("------------------------------ReadExportResultCommand----------------------------------------");
+            ReadExportResultCommand readExportResultCommand = new ReadExportResultCommand(tree);
+            readExportResultCommand.execute();
+//            tree.inspect(parser);
             
 //            System.out.println(tree.toStringTree(parser)); // print LISP-style tre
         }catch (Exception ex){            

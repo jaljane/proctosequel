@@ -14,9 +14,10 @@ import org.proctosequel.query.om.ExportResult;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class ReadExportResultCommand  implements Command{
+public class ReadExportResultCommand implements Command{
     
-    private List<ExportResult> exportResult = new ArrayList<>();
+    private List<ExportResult> exportResults = new ArrayList<>();
+    
     
     private ProcToSequelGrammarParser.ProgContext progTree;
 
@@ -26,14 +27,39 @@ public class ReadExportResultCommand  implements Command{
     
     public void execute(){
         for(InstContext instContext : getProgTree().inst()){
-            if (instContext.setvar()!= null && !instContext.setvar().isEmpty()){
-
-//                System.out.println(); 
-//                exportQueries.add();
+            if (instContext.exportToTable()!= null && !instContext.exportToTable().isEmpty()){
+                ExportResult exportResult = new ExportResult();
+                ProcToSequelGrammarParser.ExportToTableContext exportToTableContext = instContext.exportToTable();
+                
+                for(int i=0;i<exportToTableContext.getChildCount();i++){
+                    if("(".equals(exportToTableContext.getChild(i).getText()) && exportResult.getQueryVarname() == null){
+                        exportResult.setQueryVarname(exportToTableContext.getChild(i+1).getText());
+                        i++;
+                    }
+                    if("to".equals(exportToTableContext.getChild(i).getText())){
+                        exportResult.setTablename(exportToTableContext.getChild(i+1).getText());
+                        i++;
+                    }
+                    if("primaryKey".equals(exportToTableContext.getChild(i).getText())){
+                        ProcToSequelGrammarParser.ExprContext exprContext = (ProcToSequelGrammarParser.ExprContext) exportToTableContext.getChild(i+1);
+                        exprContext = (ProcToSequelGrammarParser.ExprContext) exprContext.getChild(1);
+                        for(int j=0;j<exprContext.getChildCount();j++){
+                            if(!",".equals(exprContext.getChild(j).getText())){
+                                exportResult.getPrimaryKeyColumns().add(exprContext.getChild(j).getText());
+                            }
+                            
+                        }
+                        
+                    }
+                    
+                }
+                exportResults.add(exportResult);
             }
+            
         }
+        System.out.println(exportResults);
     }
-
+  
     /**
      * @return the progTree
      */
@@ -44,8 +70,8 @@ public class ReadExportResultCommand  implements Command{
     /**
      * @return the exportQueries
      */
-    public List<ExportResult> getExportResult() {
-        return exportResult;
+    public List<ExportResult> getExportResults() {
+        return exportResults;
     }
     
 }

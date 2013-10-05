@@ -22,6 +22,12 @@ public class ExportQuery {
     public String getVarname() {
         return varname;
     }
+
+    @Override
+    public String toString() {
+        return varname;
+    }
+    
     
     
 }

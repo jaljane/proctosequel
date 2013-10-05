@@ -5,6 +5,7 @@
 package org.proctosequel.query.om;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,5 +64,13 @@ public class ExportResult {
     public void setPrimaryKeyColumns(List<String> primaryKeyColumns) {
         this.primaryKeyColumns = primaryKeyColumns;
     }
+
+    @Override
+    public String toString() {
+        
+        return "{ queryVarname : " + queryVarname + "\n, tablename : " + tablename + "\n, primaryKeyColumns : " + Arrays.deepToString(primaryKeyColumns.toArray()) + "}"; 
+    }
+    
+    
     
 }

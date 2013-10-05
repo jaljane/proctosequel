@@ -11,8 +11,8 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.query.exception.SemanticsError;
 import org.proctosequel.query.exception.SyntaxError;
 import org.proctosequel.query.om.Query;
-import org.proctosequel.query.parsing.DependencyVisitor;
-import org.proctosequel.query.parsing.GetColumnsVisitor;
+import org.proctosequel.query.parsing.VarNameVisitor;
+import org.proctosequel.query.parsing.GetQueryColumnsVisitor;
 import org.proctosequel.query.utils.Errors;
 
 /**
@@ -36,7 +36,7 @@ public class ReadQueriesCommand  implements Command {
                 if(selectStmtContext==null || selectStmtContext.isEmpty()){
                     throw new SyntaxError(instContext.setvar().VarName().getText(), Errors.set_var_error_msg);
                 }
-                if(  "(".equals(selectStmtContext.getChild(0).getText().intern())){
+                if(  "(".equals(selectStmtContext.getChild(0).getText())){
                     throw new SyntaxError(instContext.setvar().VarName().getText(), Errors.set_var_superfluous_parenthesis_error_msg);
                 }
                 boolean selectpart = false;
@@ -99,7 +99,7 @@ public class ReadQueriesCommand  implements Command {
         
         // get Dependencies
         for(Query query : queries.values()){
-            DependencyVisitor dependencyVisitor = new DependencyVisitor();
+            VarNameVisitor dependencyVisitor = new VarNameVisitor();
             if(query.getSelectPart()!=null){
                 dependencyVisitor.visit(query.getSelectPart());
             }
@@ -113,7 +113,7 @@ public class ReadQueriesCommand  implements Command {
                 dependencyVisitor.visit(query.getGroupPart());
             }
             
-            for(String varname : dependencyVisitor.getDependencies()){
+            for(String varname : dependencyVisitor.getVarNames()){
                 if(queries.get(varname)!=null){                    
                     query.getDependsOn().add(queries.get(varname));
                 }else {
@@ -124,7 +124,7 @@ public class ReadQueriesCommand  implements Command {
         
         // get Dependencies
         for(Query query : queries.values()){
-            GetColumnsVisitor getColumnsVisitor = new GetColumnsVisitor();
+            GetQueryColumnsVisitor getColumnsVisitor = new GetQueryColumnsVisitor();
             getColumnsVisitor.visit(query.getSelectPart());
             for(String column : getColumnsVisitor.getColumns()){
                 query.getColumns().put(column, column);
