@@ -73,7 +73,6 @@
     -->
     
     <target name="-pre-compile">
-        <!--<java classpath="${javac.classpath}" classname="org.antlr.v4.Tool" args="src/conf/Hello.g4 -package antlrsample.generated -o src/java/antlrsample/generated"/>-->
         <java classpath="${javac.classpath}" classname="org.antlr.v4.Tool" args="src/conf/ProcToSequelGrammar.g4 -package org.proctosequel.antlr -o src/java/org/proctosequel/antlr -visitor"/>
     </target>
 </project>
