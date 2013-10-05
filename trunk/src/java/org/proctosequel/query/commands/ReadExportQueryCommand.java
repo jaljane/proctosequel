@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
+import org.proctosequel.query.exception.SemanticsError;
 import org.proctosequel.query.om.ExportQuery;
+import org.proctosequel.query.parsing.VarNameVisitor;
+import org.proctosequel.query.utils.Errors;
 
 /**
  *
@@ -25,12 +28,18 @@ public class ReadExportQueryCommand implements Command{
     
     public void execute(){
         for(InstContext instContext : getProgTree().inst()){
-            if (instContext.setvar()!= null && !instContext.setvar().isEmpty()){
-
-//                System.out.println(); 
-//                exportQueries.add();
+            if (instContext.exportToFunction()!= null && !instContext.exportToFunction().isEmpty()){
+                VarNameVisitor varNameVisitor = new VarNameVisitor();
+                varNameVisitor.visit(instContext.exportToFunction());
+                if(varNameVisitor.getVarNames().size() == 1){
+                    exportQueries.add(new ExportQuery(varNameVisitor.getVarNames().get(0)));
+                }else {
+                    throw new SemanticsError(Errors.bad_export_to_function_expr);
+                }
+                
             }
         }
+        System.out.println(exportQueries);
     }
 
     /**
