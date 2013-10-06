@@ -33,44 +33,41 @@ public class MetadataCache {
         synchronized (MetadataCache.class) {
             if (metadataCache == null) {
                 metadataCache = new MetadataCache();
-                metadataCache.reload();
+                metadataCache.load();
             }
         }
         return metadataCache;
     }
 
-    
-    
     public void reload(){
-                Connection connection = null;
-                try {
-                    InitialContext context = new InitialContext();
-                    DataSource dataSource = (DataSource) context.lookup(System.getProperty("proctosequel.datasource.naming"));
-                    String[] schemas = StringHelper.splitAndUpperCase(System.getProperty("proctosequel.schemas"), ";");
-                    connection = dataSource.getConnection();
-                    this.putSchemas(connection, Arrays.asList(schemas));
-                    this.putTables(connection);
+        synchronized (MetadataCache.class) {
+            this.load();
+        }
+    }
+    
+    private void load(){
+            Connection connection = null;
+            try {
+                InitialContext context = new InitialContext();
+                DataSource dataSource = (DataSource) context.lookup(System.getProperty("proctosequel.datasource.naming"));
+                String[] schemas = StringHelper.splitAndUpperCase(System.getProperty("proctosequel.schemas"), ";");
+                connection = dataSource.getConnection();
+                this.putSchemas(connection, Arrays.asList(schemas));
+                this.putTables(connection);
 
-                } catch (Exception ex) {
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }finally{
+                try {
+                    if(connection!=null && !connection.isClosed())
+                    connection.close();
+                } catch (SQLException ex) {
                     throw new RuntimeException(ex);
-                }finally{
-                    try {
-                        if(connection!=null && !connection.isClosed())
-                        connection.close();
-                    } catch (SQLException ex) {
-                        throw new RuntimeException(ex);
-                    }
                 }
+            }
         
     }
     
-    /**
-     * @return the metadataCache
-     */
-    public static MetadataCache getMetadataCache() {
-        return metadataCache;
-    }
-
     private void putSchemas(Connection connection, List<String> schemas) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();
         try (ResultSet resultSet = metaData.getSchemas()) {
