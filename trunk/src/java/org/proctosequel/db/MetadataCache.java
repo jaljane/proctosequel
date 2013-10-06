@@ -41,6 +41,9 @@ public class MetadataCache {
 
     public void reload(){
         synchronized (MetadataCache.class) {
+            schemaTableMapping.clear();
+            tableDbColumnsMapping.clear();
+            tableColumnsMapping.clear();            
             this.load();
         }
     }
