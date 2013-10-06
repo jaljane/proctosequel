@@ -1,10 +1,11 @@
-
-package org.proctosequel;
+package org.proctosequel.test;
 
 import java.io.File;
 import java.io.StringReader;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.apache.log4j.Logger;
+import org.junit.Test;
 import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.query.commands.ReadExportQueryCommand;
@@ -15,17 +16,21 @@ import org.proctosequel.utils.FileHelper;
 
 /**
  *
- * @author Jamel Aljane <aljane.jamel@gmail.com>
+ * @author Jamel
  */
-public class ProceduraltoSequal {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-
-        try {
-            String content = FileHelper.getContent(new File("C:\\Users\\Jamel\\Documents\\NetBeansProjects\\proctosequel\\src\\java\\org\\proctosequel\\dummy_1.txt"));
+public class ProcToSequelParseTest extends BaseTest {
+    
+    public static Logger log = Logger.getLogger(ProcToSequelParseTest.class);
+    
+    public ProcToSequelParseTest() {
+        
+    }
+    
+    
+    
+    @Test
+    public void testProcToSequelParse() throws Exception{        
+            String content = FileHelper.getContent(new File("C:\\sources\\NetBeansProjects\\trunk\\src\\java\\org\\proctosequel\\dummy_1.txt"));
             content = ProgTreeHelper.progToLowerCase(content);
             ANTLRInputStream input = new ANTLRInputStream(new StringReader(content));
             ProcToSequelGrammarLexer lexer = new ProcToSequelGrammarLexer(input);
@@ -41,10 +46,9 @@ public class ProceduraltoSequal {
             readExportQueryCommand.execute();
             System.out.println("------------------------------ReadExportResultCommand----------------------------------------");
             ReadExportResultCommand readExportResultCommand = new ReadExportResultCommand(tree);
-            readExportResultCommand.execute();
-//            tree.inspect(parser);
-        } catch (Exception ex) {
-            ex.printStackTrace(System.err);
-        }
+            readExportResultCommand.execute();        
     }
+ 
+    
+    
 }
