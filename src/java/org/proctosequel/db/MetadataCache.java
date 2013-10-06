@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package org.proctosequel.db;
 
 import java.sql.Connection;
@@ -15,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
-import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.db.om.DbColumn;
 import org.proctosequel.utils.StringHelper;
 
@@ -26,35 +22,46 @@ import org.proctosequel.utils.StringHelper;
 public class MetadataCache {
 
     private static MetadataCache metadataCache;
-    
     private Map<String, List<String>> schemaTableMapping = new HashMap<>();
     private Map<String, List<DbColumn>> tableDbColumnsMapping = new HashMap<>();
     private Map<String, List<String>> tableColumnsMapping = new HashMap<>();
-    
-    
-    private MetadataCache(){
-        
+
+    private MetadataCache() {
     }
-    
-    public static MetadataCache getInstance(){
-        synchronized(MetadataCache.class){
-            if(metadataCache==null){
+
+    public static MetadataCache getInstance() {
+        synchronized (MetadataCache.class) {
+            if (metadataCache == null) {
                 metadataCache = new MetadataCache();
-                try{
-                    InitialContext context = new InitialContext();
-                    DataSource dataSource = (DataSource) context.lookup(System.getProperty("proctosequel.datasource.naming"));                    
-                    String[] schemas = StringHelper.splitAndUpperCase(System.getProperty("proctosequel.schemas"), ";");   
-                    Connection connection = dataSource.getConnection();
-                    metadataCache.putSchemas(connection, Arrays.asList(schemas));
-                    metadataCache.putTables(connection);
-                    
-                }catch(Exception ex){
-                    throw new RuntimeException(ex);
-                }
-                
-            }            
+                metadataCache.reload();
+            }
         }
         return metadataCache;
+    }
+
+    
+    
+    public void reload(){
+                Connection connection = null;
+                try {
+                    InitialContext context = new InitialContext();
+                    DataSource dataSource = (DataSource) context.lookup(System.getProperty("proctosequel.datasource.naming"));
+                    String[] schemas = StringHelper.splitAndUpperCase(System.getProperty("proctosequel.schemas"), ";");
+                    connection = dataSource.getConnection();
+                    this.putSchemas(connection, Arrays.asList(schemas));
+                    this.putTables(connection);
+
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }finally{
+                    try {
+                        if(connection!=null && !connection.isClosed())
+                        connection.close();
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+        
     }
     
     /**
@@ -69,18 +76,18 @@ public class MetadataCache {
         try (ResultSet resultSet = metaData.getSchemas()) {
             while (resultSet.next()) {
                 String schema = resultSet.getString("TABLE_SCHEM");
-                if(schemas==null || schemas.isEmpty() || schemas.contains(schema) ){
+                if (schemas == null || schemas.isEmpty() || schemas.contains(schema)) {
                     schemaTableMapping.put(schema, null);
                 }
-                
+
             }
         }
     }
 
-    private void putTables(Connection connection) throws SQLException {        
+    private void putTables(Connection connection) throws SQLException {
         DatabaseMetaData metaData = connection.getMetaData();
-        
-        for(String schema : schemaTableMapping.keySet()){
+
+        for (String schema : schemaTableMapping.keySet()) {
             List<String> tableItem = new ArrayList<>();
             try (ResultSet resultSet = metaData.getTables(null, schema, null, null)) {
                 while (resultSet.next()) {
@@ -90,41 +97,49 @@ public class MetadataCache {
                         List<DbColumn> dbColumnItem = new ArrayList<>();
                         List<String> columnItem = new ArrayList<>();
                         while (resultSet2.next()) {
-                            DbColumn dbColumn = new DbColumn(resultSet2.getString("COLUMN_NAME"), resultSet2.getInt("DATA_TYPE")) ;
+                            DbColumn dbColumn = new DbColumn(resultSet2.getString("COLUMN_NAME"), resultSet2.getInt("DATA_TYPE"));
                             dbColumnItem.add(dbColumn);
                             columnItem.add(resultSet2.getString("COLUMN_NAME"));
                         }
                         tableDbColumnsMapping.put(table, dbColumnItem);
                         tableColumnsMapping.put(table, columnItem);
                     }
-                    
-                    
+
+
                 }
-            }           
+            }
             schemaTableMapping.put(schema, tableItem);
         }
-        
-        
+
+
     }
 
     /**
      * @return the schemaTableMapping
      */
     public Map<String, List<String>> getSchemaTableMapping() {
-        return schemaTableMapping;
+        synchronized (MetadataCache.class) {
+            return schemaTableMapping;
+        }
+
     }
 
     /**
      * @return the TableDbColumnsMapping
      */
     public Map<String, List<DbColumn>> getTableDbColumnsMapping() {
-        return tableDbColumnsMapping;
+        synchronized (MetadataCache.class) {
+            return tableDbColumnsMapping;
+        }
     }
 
     /**
      * @return the TableColumnsMapping
      */
     public Map<String, List<String>> getTableColumnsMapping() {
-        return tableColumnsMapping;
+        synchronized (MetadataCache.class) {
+            return tableColumnsMapping;
+        }
+
     }
 }

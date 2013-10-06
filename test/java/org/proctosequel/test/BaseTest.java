@@ -5,7 +5,6 @@
 package org.proctosequel.test;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.naming.Context;
 import oracle.jdbc.pool.OracleConnectionPoolDataSource;
@@ -14,7 +13,6 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.After;
 import org.junit.Before;
 import org.proctosequel.config.ProcToSequelConfigurator;
-import tyrex.resource.jdbc.DataSourceConfig;
 import tyrex.tm.RuntimeContext;
 
 /**
@@ -47,8 +45,6 @@ public class BaseTest{
             dataSource.setPassword("hr");            
             jndiCtx.bind( "oraclehr", dataSource );
             ProcToSequelConfigurator.configure("/org/proctosequel/proctosequel.properties");
-//            DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
-//            connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "hr", "hr");
             DOMConfigurator.configure(getClass().getResource("/log4j.xml") );
         }catch (Exception ex){
             throw new RuntimeException(ex);
