@@ -10,7 +10,7 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ProcToSequelParseTest.class,
+    ProctosequelParseTest.class,
     MetadataTest.class,
 })
 public class MasterTest extends BaseTest{

@@ -1,6 +1,7 @@
 
 package org.proctosequel.query.parsing;
 
+import org.proctosequel.query.parsing.composite.AddSpaceVisitor;
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -11,7 +12,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class GetQueryColumnsVisitor extends ProcToSequelGrammarBaseVisitor{
+public class SepCommaExprsVisitor extends ProcToSequelGrammarBaseVisitor{
     
     private ProcToSequelGrammarParser.SqlPartContext sqlPartContext;
     private List<String> columns = new ArrayList<>();
@@ -23,7 +24,7 @@ public class GetQueryColumnsVisitor extends ProcToSequelGrammarBaseVisitor{
             this.sqlPartContext = ctx;
         }
         
-        return super.visitSqlPart(ctx); 
+        return null; 
     }
     
     
@@ -40,7 +41,7 @@ public class GetQueryColumnsVisitor extends ProcToSequelGrammarBaseVisitor{
                     for(ParseTree parseTree : parseTreeBuffer){
                         AddSpaceVisitor visitor = new AddSpaceVisitor();
                         visitor.visit(parseTree);                        
-                        buffer+=visitor.getQuery();
+                        buffer+=visitor.getExpr();
                     }
                     parseTreeBuffer.clear();
                     columns.add(buffer);                    
@@ -53,7 +54,7 @@ public class GetQueryColumnsVisitor extends ProcToSequelGrammarBaseVisitor{
             for(ParseTree parseTree : parseTreeBuffer){
                 AddSpaceVisitor visitor = new AddSpaceVisitor();
                 visitor.visit(parseTree);
-                buffer+=visitor.getQuery();
+                buffer+=visitor.getExpr();
             }
             parseTreeBuffer.clear();
             columns.add(buffer);                    
@@ -61,7 +62,7 @@ public class GetQueryColumnsVisitor extends ProcToSequelGrammarBaseVisitor{
             
         }
         
-        return super.visitExpr(ctx);
+        return null;
     }
 
     @Override
@@ -72,10 +73,10 @@ public class GetQueryColumnsVisitor extends ProcToSequelGrammarBaseVisitor{
             String buffer = "";
             AddSpaceVisitor visitor = new AddSpaceVisitor();
             visitor.visit(ctx);
-            buffer+=visitor.getQuery();
+            buffer+=visitor.getExpr();
             columns.add(buffer);    
         }
-        return super.visitSelectStmt(ctx);
+        return null;
     }
 
 
