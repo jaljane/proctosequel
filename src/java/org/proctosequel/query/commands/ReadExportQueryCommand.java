@@ -7,7 +7,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.query.exception.SemanticsError;
 import org.proctosequel.query.om.ExportQuery;
-import org.proctosequel.query.parsing.VarNameVisitor;
+import org.proctosequel.query.parsing.VarNamesVisitor;
 import org.proctosequel.query.utils.Errors;
 
 /**
@@ -26,7 +26,7 @@ public class ReadExportQueryCommand implements Command{
     public void execute(){
         for(InstContext instContext : getProgTree().inst()){
             if (instContext.exportToFunction()!= null && !instContext.exportToFunction().isEmpty()){
-                VarNameVisitor varNameVisitor = new VarNameVisitor();
+                VarNamesVisitor varNameVisitor = new VarNamesVisitor();
                 varNameVisitor.visit(instContext.exportToFunction());
                 if(varNameVisitor.getVarNames().size() == 1){
                     exportQueries.add(new ExportQuery(varNameVisitor.getVarNames().get(0)));

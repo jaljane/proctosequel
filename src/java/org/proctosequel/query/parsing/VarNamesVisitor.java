@@ -13,7 +13,7 @@ import org.proctosequel.query.utils.Constants;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class VarNameVisitor extends ProcToSequelGrammarBaseVisitor{
+public class VarNamesVisitor extends ProcToSequelGrammarBaseVisitor{
 
     private List<String> varnames = new ArrayList<>();
     

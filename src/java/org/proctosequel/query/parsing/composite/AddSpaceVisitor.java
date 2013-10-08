@@ -1,5 +1,5 @@
 
-package org.proctosequel.query.parsing;
+package org.proctosequel.query.parsing.composite;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
@@ -11,21 +11,21 @@ import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
 public class AddSpaceVisitor extends  ProcToSequelGrammarBaseVisitor{
 
     
-    private String query = "";
+    private String expr = "";
     
     @Override
     public Object visitTerminal(TerminalNode tn) {
-        query += " " + tn.getText();
+        expr += " " + tn.getText();
          return null;
     }
 
     /**
      * @return the query
      */
-    public String getQuery() {
-        return query;
+    public String getExpr() {
+        return expr;
     }
     public void reset(){
-        query = "";
+        expr = "";
     }
 }

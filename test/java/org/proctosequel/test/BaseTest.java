@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.After;
 import org.junit.Before;
-import org.proctosequel.config.ProcToSequelConfigurator;
+import org.proctosequel.config.ProctosequelConfigurator;
 import tyrex.tm.RuntimeContext;
 
 /**
@@ -44,7 +44,7 @@ public class BaseTest{
             dataSource.setUser("hr");
             dataSource.setPassword("hr");            
             jndiCtx.bind( "oraclehr", dataSource );
-            ProcToSequelConfigurator.configure("/org/proctosequel/proctosequel.properties");
+            ProctosequelConfigurator.configure("/org/proctosequel/proctosequel.properties");
             DOMConfigurator.configure(getClass().getResource("/log4j.xml") );
         }catch (Exception ex){
             throw new RuntimeException(ex);

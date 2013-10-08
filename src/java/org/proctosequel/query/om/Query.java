@@ -2,11 +2,13 @@
 package org.proctosequel.query.om;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.proctosequel.query.parsing.AddSpaceVisitor;
+import org.proctosequel.query.om.composite.Column;
+import org.proctosequel.query.om.composite.Condition;
+import org.proctosequel.query.om.composite.GroupBy;
+import org.proctosequel.query.om.composite.TableJoinExpr;
+import org.proctosequel.query.parsing.composite.AddSpaceVisitor;
 
 /**
  *
@@ -18,7 +20,10 @@ public class Query {
     private ParseTree fromPart;
     private ParseTree wherePart;
     private ParseTree groupPart;
-    private Map<String, String> columns = new LinkedHashMap<>();
+    private List<Column> columns = new ArrayList<>();
+    private List<TableJoinExpr> tableJoinExprs = new ArrayList<>();
+    private List<Condition> conditions = new ArrayList<>();
+    private GroupBy groupBy;
     private List<Query> dependsOn = new ArrayList<>();
     /**
      * @return the identifier
@@ -97,21 +102,7 @@ public class Query {
     public List<Query> getDependsOn() {
         return dependsOn;
     }
-
-
-    /**
-     * @return the columns
-     */
-    public Map<String, String> getColumns() {
-        return columns;
-    }
-
-    /**
-     * @param columns the columns to set
-     */
-    public void setColumns(Map<String, String> columns) {
-        this.columns = columns;
-    }    
+    
     /**
      * @param dependsOn the dependsOn to set
      */
@@ -126,25 +117,60 @@ public class Query {
         if(getSelectPart()!=null){
             visitor.reset();
             visitor.visit(getSelectPart());
-            result+="selectPart : " + visitor.getQuery() + "\n";
+            result+="selectPart : " + visitor.getExpr() + "\n";
         }
         if(getFromPart()!=null){
             visitor.reset();
             visitor.visit(getFromPart());
-            result+="fromPart : " + visitor.getQuery() +  "\n";            
+            result+="fromPart : " + visitor.getExpr() +  "\n";            
         }
         if(getWherePart()!=null){
             visitor.reset();
             visitor.visit(getWherePart());
-            result+="wherePart : " + visitor.getQuery() +  "\n";            
+            result+="wherePart : " + visitor.getExpr() +  "\n";            
         }
         if(getGroupPart()!=null){
             visitor.reset();
             visitor.visit(getGroupPart());
-            result+="groupByPart : " + visitor.getQuery()+  "\n";
+            result+="groupByPart : " + visitor.getExpr()+  "\n";
         }
 
-        return result; //To change body of generated methods, choose Tools | Templates.
+        return result; 
+    }
+
+    /**
+     * @return the columns
+     */
+    public List<Column> getColumns() {
+        return columns;
+    }
+
+    /**
+     * @return the tableJoinExprs
+     */
+    public List<TableJoinExpr> getTableJoinExprs() {
+        return tableJoinExprs;
+    }
+
+    /**
+     * @return the conditions
+     */
+    public List<Condition> getConditions() {
+        return conditions;
+    }
+
+    /**
+     * @return the groupBy
+     */
+    public GroupBy getGroupBy() {
+        return groupBy;
+    }
+
+    /**
+     * @param groupBy the groupBy to set
+     */
+    public void setGroupBy(GroupBy groupBy) {
+        this.groupBy = groupBy;
     }
 
 

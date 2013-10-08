@@ -2,15 +2,18 @@
 package org.proctosequel.query.commands;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.query.exception.SemanticsError;
 import org.proctosequel.query.exception.SyntaxError;
 import org.proctosequel.query.om.Query;
-import org.proctosequel.query.parsing.VarNameVisitor;
-import org.proctosequel.query.parsing.GetQueryColumnsVisitor;
+import org.proctosequel.query.parsing.VarNamesVisitor;
+import org.proctosequel.query.parsing.SepCommaExprsVisitor;
+import org.proctosequel.query.parsing.composite.AllTokensVisitor;
 import org.proctosequel.query.utils.Errors;
+import org.proctosequel.query.utils.ProctosequelHelper;
 
 /**
  *
@@ -96,7 +99,7 @@ public class ReadQueriesCommand  implements Command {
         
         // get Dependencies
         for(Query query : queries.values()){
-            VarNameVisitor dependencyVisitor = new VarNameVisitor();
+            VarNamesVisitor dependencyVisitor = new VarNamesVisitor();
             if(query.getSelectPart()!=null){
                 dependencyVisitor.visit(query.getSelectPart());
             }
@@ -121,10 +124,17 @@ public class ReadQueriesCommand  implements Command {
         
         // get Dependencies
         for(Query query : queries.values()){
-            GetQueryColumnsVisitor getColumnsVisitor = new GetQueryColumnsVisitor();
-            getColumnsVisitor.visit(query.getSelectPart());
-            for(String column : getColumnsVisitor.getColumns()){
-                query.getColumns().put(column, column);
+            SepCommaExprsVisitor sepCommaExprsVisitor = new SepCommaExprsVisitor();
+            sepCommaExprsVisitor.visit(query.getSelectPart());
+            
+            for(String column : sepCommaExprsVisitor.getColumns()){
+                AllTokensVisitor allTokensVisitor = new AllTokensVisitor();                
+                allTokensVisitor.visit(ProctosequelHelper.parseSqlPart(column));
+                List<String> tokens = allTokensVisitor.getTokens();
+                if(tokens.size() == 1){
+                    query.getColumns().add(null);
+                }
+//                query.getColumns().put(column, column);
             }
             
         }        
