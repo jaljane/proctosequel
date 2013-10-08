@@ -12,11 +12,11 @@ import java.util.Properties;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class ProctosequelConfigurator {
+public class ProctosequelPropertiesConfigurator {
     
     public static void configure(String resourcePath) throws IOException{
         Properties properties = new Properties();
-        properties.load(ProctosequelConfigurator.class.getResourceAsStream(resourcePath));
+        properties.load(ProctosequelPropertiesConfigurator.class.getResourceAsStream(resourcePath));
         System.getProperties().put("proctosequel.datasource.naming", properties.get("datasource"));
         System.getProperties().put("proctosequel.schemas", properties.get("schemas"));               
     }
