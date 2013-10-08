@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.junit.After;
 import org.junit.Before;
-import org.proctosequel.config.ProctosequelConfigurator;
+import org.proctosequel.config.ProctosequelPropertiesConfigurator;
 import tyrex.tm.RuntimeContext;
 
 /**
