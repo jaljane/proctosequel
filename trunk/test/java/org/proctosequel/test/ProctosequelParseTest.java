@@ -8,10 +8,10 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
-import org.proctosequel.query.commands.ReadExportQueryCommand;
-import org.proctosequel.query.commands.ReadExportResultCommand;
-import org.proctosequel.query.commands.ReadQueriesCommand;
-import org.proctosequel.query.utils.ProctosequelHelper;
+import org.proctosequel.parsing.commands.ReadExportQueryCommand;
+import org.proctosequel.parsing.commands.ReadExportResultCommand;
+import org.proctosequel.parsing.commands.ReadQueriesCommand;
+import org.proctosequel.parsing.utils.ProctosequelHelper;
 import org.proctosequel.utils.FileHelper;
 
 /**
