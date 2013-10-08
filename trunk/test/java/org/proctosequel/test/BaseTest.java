@@ -44,7 +44,7 @@ public class BaseTest{
             dataSource.setUser("hr");
             dataSource.setPassword("hr");            
             jndiCtx.bind( "oraclehr", dataSource );
-            ProctosequelConfigurator.configure("/org/proctosequel/proctosequel.properties");
+            ProctosequelPropertiesConfigurator.configure("/org/proctosequel/proctosequel.properties");
             DOMConfigurator.configure(getClass().getResource("/log4j.xml") );
         }catch (Exception ex){
             throw new RuntimeException(ex);
