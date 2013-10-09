@@ -15,7 +15,12 @@ public class AddSpaceVisitor extends  ProcToSequelGrammarBaseVisitor{
     
     @Override
     public Object visitTerminal(TerminalNode tn) {
-        expr += " " + tn.getText();
+        if(tn.getText().startsWith(".") || tn.getText().startsWith(":")){
+            expr += tn.getText();
+        }else {
+            expr += " " + tn.getText();
+        }
+        
          return null;
     }
 

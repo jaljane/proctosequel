@@ -9,8 +9,9 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.Query;
+import org.proctosequel.parsing.om.composite.AliasedData;
+import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.visitors.VarNamesVisitor;
-import org.proctosequel.parsing.visitors.SepCommaExprsVisitor;
 import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
 import org.proctosequel.parsing.utils.Errors;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
@@ -122,23 +123,16 @@ public class ReadQueriesCommand  implements Command {
             }
         }
         
-        // get Dependencies
+        // get columns
         for(Query query : queries.values()){
-            SepCommaExprsVisitor sepCommaExprsVisitor = new SepCommaExprsVisitor();
-            sepCommaExprsVisitor.visit(query.getSelectPart());
-            
-            for(String column : sepCommaExprsVisitor.getColumns()){
-                AllTokensVisitor allTokensVisitor = new AllTokensVisitor();                
-                allTokensVisitor.visit(ProctosequelHelper.parseSqlPart(column));
-                List<String> tokens = allTokensVisitor.getTokens();
-                if(tokens.size() == 1){
-                    query.getColumns().add(null);
-                }
-//                query.getColumns().put(column, column);
-            }
-            
-        }        
-        
+//             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
+//             query.getColumns().addAll(columns);
+        } 
+        // get tables and joins
+        for(Query query : queries.values()){
+//             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
+//             query.getColumns().addAll(columns);            
+        }
         System.out.println(queries);
     }
 

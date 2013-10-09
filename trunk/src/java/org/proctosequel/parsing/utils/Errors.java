@@ -11,4 +11,5 @@ public interface Errors {
     String bad_string_litteral_error_msg = "bad string litteral.";
     String unkown_varname = "unknown varname %s.";
     String bad_export_to_function_expr = "bad exportToFunction instruction.";
+    String bad_sql_part_fragment="varname %s - bad or unsupported fragment %s";
 }
