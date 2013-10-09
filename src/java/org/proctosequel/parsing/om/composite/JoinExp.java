@@ -5,6 +5,8 @@
 
 package org.proctosequel.parsing.om.composite;
 
+import java.util.List;
+
 /**
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
@@ -14,16 +16,16 @@ public class JoinExp {
     private String leftTable;
     private String rightTable;
     private String join;
-    private String condition;
+    private List<Condition> conditions;
 
     public JoinExp() {
     }
 
-    public JoinExp(String leftTable, String rightTable, String join, String condition) {
+    public JoinExp(String leftTable, String rightTable, String join, List<Condition> conditions) {
         this.leftTable = leftTable;
         this.rightTable = rightTable;
         this.join = join;
-        this.condition = condition;
+        this.conditions = conditions;
     }
 
     /**
@@ -71,15 +73,15 @@ public class JoinExp {
     /**
      * @return the condition
      */
-    public String getCondition() {
-        return condition;
+    public List<Condition> getConditions() {
+        return conditions;
     }
 
     /**
      * @param condition the condition to set
      */
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setConditions(List<Condition> conditions) {
+        this.conditions = conditions;
     }
     
     

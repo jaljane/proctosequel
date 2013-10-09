@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class TableJoinExpr {
     
-    private String table;
+    private Table table;
     private List<JoinExp> joinExps = new ArrayList<>();
 
     public TableJoinExpr() {
@@ -23,14 +23,14 @@ public class TableJoinExpr {
     /**
      * @return the table
      */
-    public String getTable() {
+    public Table getTable() {
         return table;
     }
 
     /**
      * @param table the table to set
      */
-    public void setTable(String table) {
+    public void setTable(Table table) {
         this.table = table;
     }
 
