@@ -5,7 +5,7 @@ import org.proctosequel.db.MetadataCache;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class MetadataTest extends BaseTest{
     

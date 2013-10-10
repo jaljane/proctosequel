@@ -1,1 +1,2 @@
- $sample := select (select * from (select uu from jj))  bebe, expr(hh(yy,oo)) toto, uu, er(kkf) aa from hht;
+/*d;ld;l;ld;l */
+$sample := select (select * from (select uu from jj))  bebe, expr(hh(yy,oo)) toto, uu, er(kkf) aa from hht;

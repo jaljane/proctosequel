@@ -17,7 +17,7 @@ import tyrex.tm.RuntimeContext;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class BaseTest{
     

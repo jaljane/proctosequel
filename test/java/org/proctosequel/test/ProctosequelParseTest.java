@@ -1,6 +1,5 @@
 package org.proctosequel.test;
 
-import java.io.File;
 import java.io.StringReader;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,7 +15,7 @@ import org.proctosequel.utils.FileHelper;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class ProctosequelParseTest extends BaseTest {
     
