@@ -17,6 +17,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.composite.AliasedData;
+import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.visitors.composite.AddSpaceVisitor;
 import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
 
@@ -196,6 +197,10 @@ public class ProctosequelHelper {
             throw new SemanticsError(String.format(Errors.bad_sql_part_fragment, varname, sqlPartContext.getChild(0).getText()) );
         }
 
+    }
+    
+    public static List<JoinExp> getJoinExps(){
+        return null;
     }
 
 }

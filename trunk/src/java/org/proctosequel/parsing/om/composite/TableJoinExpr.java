@@ -11,9 +11,10 @@ import java.util.List;
 /**
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
+ * table or joinExps. if one is null or empty, the other is not null and not empty, and vise versa.
  */
 public class TableJoinExpr {
-    
+
     private Table table;
     private List<JoinExp> joinExps = new ArrayList<>();
 
