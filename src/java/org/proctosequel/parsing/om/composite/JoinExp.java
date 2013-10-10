@@ -10,19 +10,20 @@ import java.util.List;
 /**
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
+ * all left tables will be added in the leftTables struct. further parse will identify which one is targeted in the join.
  */
 public class JoinExp {
-    
-    private String leftTable;
-    private String rightTable;
+
+    private List<Table> leftTables;
+    private Table rightTable;
     private String join;
     private List<Condition> conditions;
 
     public JoinExp() {
     }
 
-    public JoinExp(String leftTable, String rightTable, String join, List<Condition> conditions) {
-        this.leftTable = leftTable;
+    public JoinExp(List<Table> leftTables, Table rightTable, String join, List<Condition> conditions) {
+        this.leftTables = leftTables;
         this.rightTable = rightTable;
         this.join = join;
         this.conditions = conditions;
@@ -31,28 +32,28 @@ public class JoinExp {
     /**
      * @return the leftTable
      */
-    public String getLeftTable() {
-        return leftTable;
+    public List<Table> getLeftTables() {
+        return leftTables;
     }
 
     /**
      * @param leftTable the leftTable to set
      */
-    public void setLeftTable(String leftTable) {
-        this.leftTable = leftTable;
+    public void setLeftTable(List<Table> leftTables) {
+        this.leftTables = leftTables;
     }
 
     /**
      * @return the rightTable
      */
-    public String getRightTable() {
+    public Table getRightTable() {
         return rightTable;
     }
 
     /**
      * @param rightTable the rightTable to set
      */
-    public void setRightTable(String rightTable) {
+    public void setRightTable(Table rightTable) {
         this.rightTable = rightTable;
     }
 
