@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -16,9 +17,8 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.composite.AliasedData;
-import org.proctosequel.parsing.om.composite.Column;
-import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.visitors.composite.AddSpaceVisitor;
+import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
 
 /**
  *
@@ -156,11 +156,7 @@ public class ProctosequelHelper {
 
             }else if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.SelectStmtContext){
                 ProcToSequelGrammarParser.SelectStmtContext ctx = (ProcToSequelGrammarParser.SelectStmtContext) sqlPartContext.getChild(i);
-                String buffer = "";
-                AddSpaceVisitor visitor = new AddSpaceVisitor();
-                visitor.visit(ctx);
-                buffer+=visitor.getExpr();
-                result.add(buffer);                    
+                parseTreeBuffer.add(ctx);                 
             }else {
                 throw new SemanticsError(String.format(Errors.bad_sql_part_fragment, varname, sqlPartContext.getChild(i).getText()) );
             }
@@ -172,39 +168,34 @@ public class ProctosequelHelper {
     public static AliasedData getAliasedData(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         if(sqlPartContext.getChildCount() == 1 && sqlPartContext.getChild(0) instanceof ProcToSequelGrammarParser.ExprContext
                 || sqlPartContext.getChild(0) instanceof ProcToSequelGrammarParser.SelectStmtContext){
-            ParseTree ctx = (ParseTree) sqlPartContext.getChild(0);
+            ParseTree ctx =sqlPartContext.getChildCount() == 1? (ParseTree) sqlPartContext.getChild(0) : sqlPartContext;
             if(ctx.getChildCount() == 1){
                 return new AliasedData(null, ctx.getChild(0).getText());                    
             }else {
-                AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
-                for(int j=0;j<ctx.getChildCount()-1;j++){   
-                    if(!"as".equals(ctx.getChild(j).getText())){
-                        addSpaceVisitor.visit(ctx.getChild(j));
-                    }                        
+                AllTokensVisitor asexpr = new AllTokensVisitor();
+                asexpr.visit(ctx.getChild(ctx.getChildCount()-1));
+                if(asexpr.getTokens().size() == 1
+                        || (asexpr.getTokens().size() == 2 && "as".equals(asexpr.getTokens().get(0)))){
+                    asexpr.getTokens().remove("as");
                 }
-                return new AliasedData(ctx.getChild(ctx.getChildCount()-1).getText(), addSpaceVisitor.getExpr());
+                if(Pattern.matches(Constants.WORD_REGEX, asexpr.getTokens().get(0))) {
+                    AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
+                    for(int j=0;j<ctx.getChildCount()-1;j++){   
+                        if(!"as".equals(ctx.getChild(j).getText())){
+                            addSpaceVisitor.visit(ctx.getChild(j));
+                        }                        
+                    }
+                    return new AliasedData(asexpr.getTokens().get(0), addSpaceVisitor.getExpr());                    
+                }else {
+                    AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
+                    addSpaceVisitor.visit(ctx);
+                    return new AliasedData(null, addSpaceVisitor.getExpr());
+                }
             }
         }else {
             throw new SemanticsError(String.format(Errors.bad_sql_part_fragment, varname, sqlPartContext.getChild(0).getText()) );
         }
 
     }
-    
-//    public static List<Column> getAliasedColumns(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){        
-//        List<Column> columns = new ArrayList<>();
-//        List<AliasedData> list = getAliasedDatas(varname, sqlPartContext);
-//        for(AliasedData aliasedData : list){
-//            columns.add(new Column(aliasedData));
-//        }
-//        return columns;
-//    }    
-    
-//    public static List<Table> getAliasedTables(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){        
-//        List<Table> tables = new ArrayList<>();
-//        List<AliasedData> list = getAliasedDatas(varname, sqlPartContext);
-//        for(AliasedData aliasedData : list){
-//            tables.add(new Table(aliasedData));
-//        }
-//        return tables;
-//    }    
+
 }

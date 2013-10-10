@@ -1,1 +1,0 @@
- $sample := select (select * from gg) as bebe, expr(hh(yy,oo)) toto, uu, er(kkf) from hht;

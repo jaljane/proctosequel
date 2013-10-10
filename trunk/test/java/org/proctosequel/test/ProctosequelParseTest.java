@@ -30,7 +30,7 @@ public class ProctosequelParseTest extends BaseTest {
     
     @Test
     public void testProcToSequelParse() throws Exception{        
-            String content = FileHelper.getContent(new File("C:\\sources\\NetBeansProjects\\trunk\\src\\java\\org\\proctosequel\\dummy_1.txt"));
+            String content = FileHelper.getContent(getClass().getResource("/org/proctosequel/datasets/dummy.txt"));
             content = ProctosequelHelper.progToLowerCase(content);
             ANTLRInputStream input = new ANTLRInputStream(new StringReader(content));
             ProcToSequelGrammarLexer lexer = new ProcToSequelGrammarLexer(input);

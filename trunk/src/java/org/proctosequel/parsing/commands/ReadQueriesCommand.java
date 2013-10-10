@@ -4,6 +4,7 @@ package org.proctosequel.parsing.commands;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.parsing.exception.SemanticsError;
@@ -12,7 +13,6 @@ import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.AliasedData;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.visitors.VarNamesVisitor;
-import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
 import org.proctosequel.parsing.utils.Errors;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
 
@@ -21,7 +21,7 @@ import org.proctosequel.parsing.utils.ProctosequelHelper;
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class ReadQueriesCommand  implements Command {
-    
+    public static Logger log = Logger.getLogger(ReadQueriesCommand.class);
     private Map<String, Query> queries = new LinkedHashMap<>();
     private ProcToSequelGrammarParser.ProgContext progTree;
 
@@ -125,15 +125,19 @@ public class ReadQueriesCommand  implements Command {
         
         // get columns
         for(Query query : queries.values()){
-//             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
-//             query.getColumns().addAll(columns);
+            List<String> selectParts = ProctosequelHelper.getSepCommaTokens(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
+            for(String selectPart : selectParts){
+                AliasedData aliasedData= ProctosequelHelper.getAliasedData(query.getIdentifier(), ProctosequelHelper.parseSqlPart(selectPart));
+                query.getColumns().add(new Column(aliasedData));
+                log.debug(new Column(aliasedData) + " added");
+            }
         } 
         // get tables and joins
         for(Query query : queries.values()){
 //             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
 //             query.getColumns().addAll(columns);            
         }
-        System.out.println(queries);
+        log.debug(queries);
     }
 
     /**
