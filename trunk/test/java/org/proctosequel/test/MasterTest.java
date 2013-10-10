@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
