@@ -38,7 +38,7 @@ public class ReadQueriesCommand  implements Command {
                     throw new SyntaxError(instContext.setvar().VarName().getText(), Errors.set_var_error_msg);
                 }
                 if(  "(".equals(selectStmtContext.getChild(0).getText())){
-                    throw new SyntaxError(instContext.setvar().VarName().getText(), Errors.set_var_superfluous_parenthesis_error_msg);
+                    throw new SyntaxError(instContext.setvar().VarName().getText(), Errors.set_var_unsupported_parenthesis_error_msg);
                 }
                 boolean selectpart = false;
                 boolean frompart = false;

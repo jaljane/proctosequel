@@ -2,6 +2,7 @@ package org.proctosequel.parsing.utils;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,8 +19,10 @@ import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.composite.AliasedData;
 import org.proctosequel.parsing.om.composite.JoinExp;
+import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.visitors.composite.AddSpaceVisitor;
 import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
+import org.proctosequel.utils.StringHelper;
 
 /**
  *
@@ -41,7 +44,7 @@ public class ProctosequelHelper {
 
         result = replaceLitteral(result, litterals);
         StringBuilder sb = new StringBuilder();
-        StringTokenizer st = new StringTokenizer(result, " \r\n\t,;().+-*/", true);
+        StringTokenizer st = new StringTokenizer(result, Constants.DELIMITER_CHARS, true);
         while (st.hasMoreTokens()) {
             String token = st.nextToken().toLowerCase();
 
@@ -199,8 +202,68 @@ public class ProctosequelHelper {
 
     }
     
-    public static List<JoinExp> getJoinExps(){
+    public static List<JoinExp> getJoinExps(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        List<String> buffer1 = new ArrayList<>();
+        List<String> buffer2 = new ArrayList<>();
+        List<String> joinKeywords = Arrays.asList("left", "right", "outer", "inner", "join", "on");
+        boolean startOfJoinKeyword = false;
+        for(int i=0;i<sqlPartContext.getChildCount();i++){
+            if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.ExprContext ){
+                if(sqlPartContext.getChild(i).getText().startsWith("(")){
+                    throw new SemanticsError(String.format(Errors.bad_parenthesis_join_fragment, varname));
+                }
+            }
+            if (!joinKeywords.contains(sqlPartContext.getChild(i).getText())){
+                AddSpaceVisitor spaceVisitor = new AddSpaceVisitor();
+                spaceVisitor.visit(sqlPartContext.getChild(i));
+                buffer1.add(spaceVisitor.getExpr());
+                startOfJoinKeyword = false;
+            }else if(joinKeywords.contains(sqlPartContext.getChild(i).getText()) && !startOfJoinKeyword){
+                buffer2.add(StringHelper.insertSpaces(buffer1));
+                buffer1.clear();                
+                AddSpaceVisitor spaceVisitor = new AddSpaceVisitor();
+                spaceVisitor.visit(sqlPartContext.getChild(i));
+                buffer1.add(spaceVisitor.getExpr());
+                startOfJoinKeyword = true;
+            }else {
+                AddSpaceVisitor spaceVisitor = new AddSpaceVisitor();
+                spaceVisitor.visit(sqlPartContext.getChild(i));
+                buffer1.add(spaceVisitor.getExpr());
+            }
+        }
+        if(!buffer1.isEmpty()){
+            buffer2.add(StringHelper.insertSpaces(buffer1));
+        }
+
+        boolean _join_visited = false;
+        boolean _on_visited = false;
+        for(String fragment : buffer2){
+            Table leftTable;
+            Table rightTable;            
+            if(StringHelper.containsWord(fragment, "join") 
+                    && !_join_visited ){
+                _join_visited = true;
+                _on_visited = false;
+            }else if(StringHelper.containsWord(fragment, "on") 
+                    && !_on_visited){
+                _join_visited = false;
+                _on_visited = true;
+            }else {
+                if(_join_visited){
+                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));
+                    rightTable = new Table(aliasedData);                    
+                }else {
+                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));                    
+                    leftTable= new Table(aliasedData);
+                }
+                if(_on_visited){
+                    
+                }
+            }
+            
+        }
         return null;
     }
+    
 
 }

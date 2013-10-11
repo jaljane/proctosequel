@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
+import org.proctosequel.parsing.utils.Constants;
 
 /**
  *
@@ -29,6 +30,21 @@ public class StringHelper {
         }
         return null;
     }
+    public static String insertSpaces(List<String> list){
+        if(list.isEmpty()){
+            return "";
+        }
+        String result = list.get(0);
+        for(int i=1;i<list.size();i++){
+            result+=" " + list.get(i);
+        }
+        return result;
+    }
     
+    public static boolean containsWord(String str, String word){
+        return StringUtils.split(str, Constants.DELIMITER_CHARS)!=null 
+                && Arrays.asList(StringUtils.split(str, Constants.DELIMITER_CHARS)).contains(word) ;
+        
+    }
     
 }
