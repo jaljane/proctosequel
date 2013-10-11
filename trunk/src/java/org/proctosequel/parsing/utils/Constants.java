@@ -8,4 +8,5 @@ package org.proctosequel.parsing.utils;
 public class Constants {
     public static String VAR_NAME_REGEX = "\\$[a-zA-Z0-9_\\.]+";
     public static String WORD_REGEX = "[a-zA-Z0-9_]+";
+    public static String DELIMITER_CHARS = " \r\n\t,;().+-*/";
 }
