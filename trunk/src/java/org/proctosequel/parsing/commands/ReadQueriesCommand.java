@@ -132,6 +132,7 @@ public class ReadQueriesCommand  implements Command {
                 log.debug(new Column(aliasedData) + " added");
             }
         } 
+        
         // get tables and joins
         for(Query query : queries.values()){
 //             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());

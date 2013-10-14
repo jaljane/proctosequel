@@ -13,13 +13,18 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
+import org.proctosequel.parsing.commands.ReadQueriesCommand;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.composite.AliasedData;
+import org.proctosequel.parsing.om.composite.Condition;
+import org.proctosequel.parsing.om.composite.ExprCondition;
 import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.Table;
+import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.visitors.composite.AddSpaceVisitor;
 import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
 import org.proctosequel.utils.StringHelper;
@@ -29,7 +34,9 @@ import org.proctosequel.utils.StringHelper;
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class ProctosequelHelper {
-
+    
+    public static Logger log = Logger.getLogger(ProctosequelHelper.class);
+    
     private static final Map<String, String> replaceTokenMaps = new HashMap<String, String>() {
         {
             put("exportquery", "exportQuery");
@@ -37,7 +44,8 @@ public class ProctosequelHelper {
             put("primarykey", "primaryKey");
         }
     };
-
+    private static List<String> joinKeywords = Arrays.asList("left", "right", "outer", "inner", "join", "on");
+    
     public static String progToLowerCase(String prog) {
         String result = prog;
         Map<String, String> litterals = new LinkedHashMap<>();
@@ -202,68 +210,165 @@ public class ProctosequelHelper {
 
     }
     
+    
+    public List<TableJoinExpr> getTableJoinExpr(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){        
+        List<TableJoinExpr> result = new ArrayList<>();
+        List<String> parts = getSepCommaTokens(varname, sqlPartContext);
+        for(String part : parts){
+            ProcToSequelGrammarParser.SqlPartContext sqlpartfragment = parseSqlPart(part);
+            if(hasSelectStmt(sqlpartfragment)){ 
+               TableJoinExpr tableJoinExpr = new TableJoinExpr();
+               tableJoinExpr.setTable(new Table(getAliasedData(varname, sqlPartContext)));
+               result.add(tableJoinExpr);
+            }else if(hasJoinExpr(sqlPartContext)){
+                List<JoinExp> joinExps =  getJoinExps(varname, sqlPartContext);
+                TableJoinExpr tableJoinExpr = new TableJoinExpr();
+                tableJoinExpr.getJoinExps().addAll(joinExps);
+                result.add(tableJoinExpr);
+            }
+        }
+        return result;
+       
+    }
+    
     public static List<JoinExp> getJoinExps(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         List<String> buffer1 = new ArrayList<>();
         List<String> buffer2 = new ArrayList<>();
-        List<String> joinKeywords = Arrays.asList("left", "right", "outer", "inner", "join", "on");
+        
         boolean startOfJoinKeyword = false;
+        
+        List<ParseTree> children = new ArrayList<>();
         for(int i=0;i<sqlPartContext.getChildCount();i++){
-            if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.ExprContext ){
-                if(sqlPartContext.getChild(i).getText().startsWith("(")){
+            if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.ExprContext){
+                ProcToSequelGrammarParser.ExprContext exprContext = (ProcToSequelGrammarParser.ExprContext) sqlPartContext.getChild(i);
+               for(int j = 0;j<exprContext.getChildCount();j++){
+                   children.add(exprContext.getChild(j));
+               }                    
+            }else {
+                children.add(sqlPartContext.getChild(i));
+            }
+        }
+        
+        for(int i=0;i<children.size();i++){
+            if(children.get(i) instanceof ProcToSequelGrammarParser.ExprContext ){
+                if(children.get(i).getText().startsWith("(")){
                     throw new SemanticsError(String.format(Errors.bad_parenthesis_join_fragment, varname));
                 }
             }
-            if (!joinKeywords.contains(sqlPartContext.getChild(i).getText())){
+            if (!joinKeywords.contains(children.get(i).getText())){  
+                if(startOfJoinKeyword){
+                    buffer2.add(StringHelper.insertSpaces(buffer1));
+                    buffer1.clear();                         
+                }
                 AddSpaceVisitor spaceVisitor = new AddSpaceVisitor();
-                spaceVisitor.visit(sqlPartContext.getChild(i));
+                spaceVisitor.visit(children.get(i));
                 buffer1.add(spaceVisitor.getExpr());
                 startOfJoinKeyword = false;
-            }else if(joinKeywords.contains(sqlPartContext.getChild(i).getText()) && !startOfJoinKeyword){
+            }else if(joinKeywords.contains(children.get(i).getText()) && !startOfJoinKeyword){
                 buffer2.add(StringHelper.insertSpaces(buffer1));
                 buffer1.clear();                
                 AddSpaceVisitor spaceVisitor = new AddSpaceVisitor();
-                spaceVisitor.visit(sqlPartContext.getChild(i));
+                spaceVisitor.visit(children.get(i));
                 buffer1.add(spaceVisitor.getExpr());
                 startOfJoinKeyword = true;
             }else {
                 AddSpaceVisitor spaceVisitor = new AddSpaceVisitor();
-                spaceVisitor.visit(sqlPartContext.getChild(i));
+                spaceVisitor.visit(children.get(i));
                 buffer1.add(spaceVisitor.getExpr());
             }
         }
         if(!buffer1.isEmpty()){
             buffer2.add(StringHelper.insertSpaces(buffer1));
         }
-
-        boolean _join_visited = false;
-        boolean _on_visited = false;
-        for(String fragment : buffer2){
-            Table leftTable;
-            Table rightTable;            
-            if(StringHelper.containsWord(fragment, "join") 
-                    && !_join_visited ){
-                _join_visited = true;
-                _on_visited = false;
-            }else if(StringHelper.containsWord(fragment, "on") 
-                    && !_on_visited){
-                _join_visited = false;
-                _on_visited = true;
+        log.debug("buffer2.length : " + buffer2.size());
+        log.debug("buffer2:" + buffer2);
+        List<JoinExp> result = new ArrayList();
+        JoinExp joinExp = new JoinExp();
+        JoinExp previousJoinExp = null;
+        joinExp.getLeftTables().add(new Table(getAliasedData(varname, parseSqlPart(buffer2.get(0)))));
+        
+        for(int i=1;i<buffer2.size();i++){
+            if(buffer2.get(i).contains("join")){
+                joinExp.setJoin(buffer2.get(i));
+                i++;
+                joinExp.setRightTable(new Table(getAliasedData(varname, parseSqlPart(buffer2.get(i)))));                
+            }else if("on".equals(buffer2.get(i).trim()) ){
+                i++;
+                Condition condition = new ExprCondition(buffer2.get(i));
+                joinExp.getConditions().add(condition);
+                result.add(joinExp);
+                previousJoinExp = joinExp;
+                joinExp = new JoinExp();
+                joinExp.getLeftTables().addAll(previousJoinExp.getLeftTables());    
+                joinExp.getLeftTables().add(previousJoinExp.getRightTable());
             }else {
-                if(_join_visited){
-                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));
-                    rightTable = new Table(aliasedData);                    
-                }else {
-                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));                    
-                    leftTable= new Table(aliasedData);
-                }
-                if(_on_visited){
-                    
-                }
+                throw new SemanticsError(String.format(Errors.bad_or_unsupported_join_fragment, varname ));
             }
-            
         }
-        return null;
+        return result;
+//        boolean _join_visited = false;
+//        boolean _on_visited = false;
+//        List<Table> leftList = new ArrayList<>();
+//        List<Table> rightList = new ArrayList<>();
+//        for(String fragment : buffer2){
+//            Table leftTable = null;
+//            Table rightTable= null;            
+//            if(StringHelper.containsWord(fragment, "join") 
+//                    && !_join_visited ){
+//                _join_visited = true;
+//                _on_visited = false;
+//            }else if(StringHelper.containsWord(fragment, "on") 
+//                    && !_on_visited){
+//                if(leftTable!=null){
+//                    leftList.add(leftTable);
+//                }
+//                if(rightTable!=null){
+//                    rightList.add(rightTable);
+//                }
+//                _join_visited = false;
+//                _on_visited = true;
+//            }else {
+//                if(!_join_visited && !_on_visited){
+//                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));                    
+//                    leftTable= new Table(aliasedData);
+//                 }
+//                
+//                if(_join_visited){
+//                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));
+//                    rightTable = new Table(aliasedData);                    
+//                }
+//                
+//                
+//                if(_on_visited){
+//                    
+//                }
+//            }
+//            
+//        }
+//        return null;
     }
     
+    private static boolean hasJoinExpr(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        for(int i=0;i<sqlPartContext.getChildCount();i++){
+            if("".equals(sqlPartContext.getChild(i).getText()) ){
+                return true;
+            }
+        }
+        return false;        
+    }
+    
+    private static boolean hasSelectStmt(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        for(int i=0;i<sqlPartContext.getChildCount();i++){
+            if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.SelectStmtContext){
+                return true;
+            }
+        }
+        return false;
+    }    
+    
+    public static void main (String[] args){
+        ProcToSequelGrammarParser.SqlPartContext sqlPartContext = parseSqlPart("table2 as yy inner join (select kklk from hh) h y on jj=ii left outer join table4 on kkd=iii");
+        getJoinExps("$jj", sqlPartContext);
+    }
 
 }

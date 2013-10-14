@@ -46,6 +46,7 @@ public class ProctosequelParseTest extends BaseTest {
             System.out.println("------------------------------ReadExportResultCommand----------------------------------------");
             ReadExportResultCommand readExportResultCommand = new ReadExportResultCommand(tree);
             readExportResultCommand.execute();    
+            
             tree.inspect(parser);
     }
  

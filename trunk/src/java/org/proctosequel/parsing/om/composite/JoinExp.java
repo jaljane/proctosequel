@@ -1,6 +1,7 @@
 
 package org.proctosequel.parsing.om.composite;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,10 +11,10 @@ import java.util.List;
  */
 public class JoinExp {
 
-    private List<Table> leftTables;
+    private List<Table> leftTables = new ArrayList<>();
     private Table rightTable;
     private String join;
-    private List<Condition> conditions;
+    private List<Condition> conditions = new ArrayList<>();
 
     public JoinExp() {
     }
@@ -32,12 +33,6 @@ public class JoinExp {
         return leftTables;
     }
 
-    /**
-     * @param leftTable the leftTable to set
-     */
-    public void setLeftTable(List<Table> leftTables) {
-        this.leftTables = leftTables;
-    }
 
     /**
      * @return the rightTable
@@ -73,15 +68,5 @@ public class JoinExp {
     public List<Condition> getConditions() {
         return conditions;
     }
-
-    /**
-     * @param condition the condition to set
-     */
-    public void setConditions(List<Condition> conditions) {
-        this.conditions = conditions;
-    }
     
-    
-    
-
 }
