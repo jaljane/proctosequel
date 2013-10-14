@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
-import org.proctosequel.parsing.commands.ReadQueriesCommand;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.composite.AliasedData;
@@ -306,46 +305,7 @@ public class ProctosequelHelper {
             }
         }
         return result;
-//        boolean _join_visited = false;
-//        boolean _on_visited = false;
-//        List<Table> leftList = new ArrayList<>();
-//        List<Table> rightList = new ArrayList<>();
-//        for(String fragment : buffer2){
-//            Table leftTable = null;
-//            Table rightTable= null;            
-//            if(StringHelper.containsWord(fragment, "join") 
-//                    && !_join_visited ){
-//                _join_visited = true;
-//                _on_visited = false;
-//            }else if(StringHelper.containsWord(fragment, "on") 
-//                    && !_on_visited){
-//                if(leftTable!=null){
-//                    leftList.add(leftTable);
-//                }
-//                if(rightTable!=null){
-//                    rightList.add(rightTable);
-//                }
-//                _join_visited = false;
-//                _on_visited = true;
-//            }else {
-//                if(!_join_visited && !_on_visited){
-//                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));                    
-//                    leftTable= new Table(aliasedData);
-//                 }
-//                
-//                if(_join_visited){
-//                    AliasedData aliasedData = getAliasedData(varname, parseSqlPart(fragment));
-//                    rightTable = new Table(aliasedData);                    
-//                }
-//                
-//                
-//                if(_on_visited){
-//                    
-//                }
-//            }
-//            
-//        }
-//        return null;
+
     }
     
     private static boolean hasJoinExpr(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
