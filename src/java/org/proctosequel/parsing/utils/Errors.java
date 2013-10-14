@@ -13,4 +13,5 @@ public interface Errors {
     String bad_export_to_function_expr = "bad exportToFunction instruction.";
     String bad_sql_part_fragment="varname %s - bad or unsupported fragment %s";
     String bad_parenthesis_join_fragment="varname %s - unsupported parenthesis at join expression (unless nested select statement).";
+    String bad_or_unsupported_join_fragment = "varname %s - bad or unsupported join fragment.";
 }
