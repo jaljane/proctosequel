@@ -27,7 +27,7 @@ import org.proctosequel.utils.StringHelper;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class QueryPaseHelper {
     
