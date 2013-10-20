@@ -10,6 +10,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.commands.ReadExportQueryCommand;
 import org.proctosequel.parsing.commands.ReadExportResultCommand;
 import org.proctosequel.parsing.commands.ReadQueriesCommand;
+import org.proctosequel.parsing.utils.Constants;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
 import org.proctosequel.utils.FileHelper;
 
@@ -30,7 +31,7 @@ public class ProctosequelParseTest extends BaseTest {
     @Test
     public void testProcToSequelParse() throws Exception{        
             String content = FileHelper.getContent(getClass().getResource("/org/proctosequel/datasets/dummy.txt"));
-            content = ProctosequelHelper.progToLowerCase(content);
+            content = ProctosequelHelper.progToLowerCase(content, Constants.replaceTokenMaps);
             ANTLRInputStream input = new ANTLRInputStream(new StringReader(content));
             ProcToSequelGrammarLexer lexer = new ProcToSequelGrammarLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);

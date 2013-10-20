@@ -14,4 +14,5 @@ public interface Errors {
     String bad_sql_part_fragment="varname %s - bad or unsupported fragment %s";
     String bad_parenthesis_join_fragment="varname %s - unsupported parenthesis at join expression (unless nested select statement).";
     String bad_or_unsupported_join_fragment = "varname %s - bad or unsupported join fragment.";
+    String bad_or_unsupported_eq_match = "varname %s - bad equal match.";
 }
