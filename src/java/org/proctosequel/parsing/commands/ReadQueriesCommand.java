@@ -12,9 +12,11 @@ import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.AliasedData;
 import org.proctosequel.parsing.om.composite.Column;
+import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.visitors.VarNamesVisitor;
 import org.proctosequel.parsing.utils.Errors;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
+import org.proctosequel.parsing.utils.QueryPaseHelper;
 
 /**
  *
@@ -125,9 +127,9 @@ public class ReadQueriesCommand  implements Command {
         
         // get columns
         for(Query query : queries.values()){
-            List<String> selectParts = ProctosequelHelper.getSepCommaTokens(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
+            List<String> selectParts = QueryPaseHelper.getSepCommaTokens(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
             for(String selectPart : selectParts){
-                AliasedData aliasedData= ProctosequelHelper.getAliasedData(query.getIdentifier(), ProctosequelHelper.parseSqlPart(selectPart));
+                AliasedData aliasedData= QueryPaseHelper.getAliasedData(query.getIdentifier(), ProctosequelHelper.parseSqlPart(selectPart));
                 query.getColumns().add(new Column(aliasedData));
                 log.debug(new Column(aliasedData) + " added");
             }
@@ -135,6 +137,8 @@ public class ReadQueriesCommand  implements Command {
         
         // get tables and joins
         for(Query query : queries.values()){
+               List<TableJoinExpr> tableJoinExprs = QueryPaseHelper.getTableJoinExpr(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getFromPart());
+               query.getTableJoinExprs().addAll(tableJoinExprs);
 //             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
 //             query.getColumns().addAll(columns);            
         }
