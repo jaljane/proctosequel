@@ -73,7 +73,9 @@
     -->
     
     <target name="-pre-compile">
+        <!--proctosequel grammar is do not detect (and | or) operators. those operators are included in expr rule. to split problem resolution, I used proctosequel grammer for sql parts parse.-->
         <java classpath="${javac.classpath}" classname="org.antlr.v4.Tool" args="src/conf/ProcToSequelGrammar.g4 -package org.proctosequel.antlr -o src/java/org/proctosequel/antlr -visitor"/>
+        <!--LogicExpr grammar is used to detect (and | or) operators. further, this will be used to parse "and" operands and isolate them to "or" ones. -->
         <java classpath="${javac.classpath}" classname="org.antlr.v4.Tool" args="src/conf/LogicExprGrammar.g4 -package org.proctosequel.antlr -o src/java/org/proctosequel/antlr -visitor"/>
     </target>
 </project>
