@@ -74,7 +74,7 @@
     
     <target name="-pre-compile">
         <!--
-        proctosequel grammar is do not detect (and | or) operators.
+        proctosequel grammar do not detect (and | or) operators.
         Those operators are included in expr rule.
         To split (simplify) problem resolution, I used proctosequel grammer for sql parts parse.
         -->
