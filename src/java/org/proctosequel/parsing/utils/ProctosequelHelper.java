@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.proctosequel.antlr.LogicExprGrammarLexer;
@@ -147,6 +148,12 @@ public class ProctosequelHelper {
         }
     }  
     
+    public static boolean childOf(ParseTree child, ParseTree parent){
+        if(child==null){
+            return false;
+        }
+        return  child.getParent() == parent || childOf(child.getParent(), parent);
+    }
     
     public static void main (String[] args){
         LogicExprGrammarParser.ConditionContext conditionContext = parseCondition("(true and (gg=uu and hhy=u) and yyt(ll,ii(kk,yy)) and dd=hh and jjj=uu and ( ll=88 and (kk=uu or kk=77)))");
