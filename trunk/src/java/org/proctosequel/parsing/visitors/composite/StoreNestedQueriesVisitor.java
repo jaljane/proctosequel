@@ -35,7 +35,11 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
             expr+=" " + "ProcToSequelGrammarParser.SelectStmtContext" + counter;
             counter++;
         }else {
-            expr+=" "+ tn.getText();
+            if(tn.getText().startsWith(".") || tn.getText().startsWith(":")){
+                expr += tn.getText();
+            }else {
+                expr += " " + tn.getText();
+            }           
         }
         return null;  
     }
@@ -46,7 +50,7 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
         return expr;
     }
     
-    public String restoredExpr(){
+    public String getRestoredExpr(){
         String buffer = expr;
         for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext > entry : nestedQueryByToken.entrySet()){
             AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
@@ -64,6 +68,7 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
         StoreNestedQueriesVisitor storeNestedQueriesVisitor = new StoreNestedQueriesVisitor();
         storeNestedQueriesVisitor.visit(sqlPartContext);
         System.out.println(storeNestedQueriesVisitor.getExpr());
+        System.out.println(storeNestedQueriesVisitor.getRestoredExpr());
 //        ProctosequelHelper.getProcToSequelParser(sqlpart);
     }
     
