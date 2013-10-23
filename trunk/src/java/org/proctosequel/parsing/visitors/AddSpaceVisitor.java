@@ -1,8 +1,10 @@
 
-package org.proctosequel.parsing.visitors.composite;
+package org.proctosequel.parsing.visitors;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
+import org.proctosequel.parsing.utils.Constants;
 
 /**
  *
@@ -15,7 +17,7 @@ public class AddSpaceVisitor extends  ProcToSequelGrammarBaseVisitor{
     
     @Override
     public Object visitTerminal(TerminalNode tn) {
-        if(tn.getText().startsWith(".") || tn.getText().startsWith(":")){
+        if(StringUtils.startsWithAny(tn.getText(), Constants.QUALIFIER_SEP_CHARS)){
             expr += tn.getText();
         }else {
             expr += " " + tn.getText();
