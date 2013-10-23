@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.proctosequel.parsing.visitors.composite;
+package org.proctosequel.parsing.visitors;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.proctosequel.parsing.visitors.composite;
+package org.proctosequel.parsing.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class AllTokensVisitor extends ProcToSequelGrammarBaseVisitor{
+public class SplitBySepVisitor extends ProcToSequelGrammarBaseVisitor{
 
     private List<String> tokens = new ArrayList<>();
     
