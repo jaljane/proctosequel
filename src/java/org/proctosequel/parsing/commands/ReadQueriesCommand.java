@@ -139,8 +139,10 @@ public class ReadQueriesCommand  implements Command {
         for(Query query : queries.values()){
                List<TableJoinExpr> tableJoinExprs = QueryPaseHelper.getTableJoinExpr(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getFromPart());
                query.getTableJoinExprs().addAll(tableJoinExprs);
-//             List<Column> columns = ProctosequelHelper.getAliasedColumns(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
-//             query.getColumns().addAll(columns);            
+        }
+        
+        for(Query query : queries.values()){
+//            query.
         }
         log.debug(queries);
     }
