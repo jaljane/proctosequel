@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.LogicExprGrammarBaseVisitor;
@@ -21,26 +22,27 @@ import org.proctosequel.parsing.utils.ProctosequelHelper;
 public class StoreIsolatedOrExprVisitor  extends LogicExprGrammarBaseVisitor{
 
 
-    private List<LogicExprGrammarParser.SubCondContext> orExprs = new ArrayList<>();
-    private Map<String, LogicExprGrammarParser.SubCondContext> orExprByToken = new HashMap<>();
-    private Map<LogicExprGrammarParser.SubCondContext, String> tokenByOrExpr = new HashMap<>();
+    private List<ParseTree> orExprs = new ArrayList<>();
+    private Map<String, ParseTree> orExprByToken = new HashMap<>();
+    private Map<ParseTree, String> tokenByOrExpr = new HashMap<>();
     
     private int counter =1; 
     private String expr = "";
 
-    public StoreIsolatedOrExprVisitor(List<LogicExprGrammarParser.SubCondContext> orExprs ) {
+    public StoreIsolatedOrExprVisitor(List<ParseTree> orExprs ) {
         this.orExprs = orExprs;
     }
 
     @Override
     public Object visitTerminal(TerminalNode tn) {
-        if(!skipTerminal(tn)){
+        ParseTree parseTree = getIsolatedParent(tn);
+        if(parseTree==null){
             if(tn.getText().startsWith(".") || tn.getText().startsWith(":")){
                 expr += tn.getText();
             }else {
                 expr += " " + tn.getText();
             }                       
-        }
+        }            
         return null;  
     }
 
@@ -52,18 +54,31 @@ public class StoreIsolatedOrExprVisitor  extends LogicExprGrammarBaseVisitor{
             expr+=" " + "LogicExprGrammarParser.SubCondContext" + counter;
             counter++;            
         }
-        return null;
+        return super.visitSubCond(ctx);
+    }
+
+    @Override
+    public Object visitCondition(LogicExprGrammarParser.ConditionContext ctx) {
+        if(orExprs.contains(ctx)){            
+            orExprByToken.put("LogicExprGrammarParser.SubCondContext" + counter, ctx);
+            tokenByOrExpr.put(ctx, "LogicExprGrammarParser.SubCondContext" + counter);
+            expr+=" " + "LogicExprGrammarParser.SubCondContext" + counter;
+            counter++;            
+        }
+        return super.visitCondition(ctx);
     }
     
     
     
-    private boolean skipTerminal(TerminalNode tn){
-        for(LogicExprGrammarParser.SubCondContext subCondContext : orExprs){
-            if(ProctosequelHelper.childOf(tn, subCondContext)){
-                return true;
+    
+    
+    private ParseTree getIsolatedParent(TerminalNode tn){
+        for(ParseTree condContext : orExprs){
+            if(ProctosequelHelper.childOf(tn, condContext)){
+                return condContext;
             }
         }
-        return false;
+        return null;
     }
     
     public String getExpr(){
@@ -72,7 +87,7 @@ public class StoreIsolatedOrExprVisitor  extends LogicExprGrammarBaseVisitor{
     
     public String getRestoredExpr(){
         String buffer = expr;
-        for(Map.Entry<String, LogicExprGrammarParser.SubCondContext > entry : orExprByToken.entrySet()){
+        for(Map.Entry<String, ParseTree > entry : orExprByToken.entrySet()){
             AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
             addSpaceVisitor.visit(entry.getValue());
             buffer = StringUtils.replace(buffer, entry.getKey(), addSpaceVisitor.getExpr());
@@ -83,12 +98,14 @@ public class StoreIsolatedOrExprVisitor  extends LogicExprGrammarBaseVisitor{
     
     
     public static void main(String[] args){
-        String logicExpr = "hh=ii or kkk";
-//        LogicExprGrammarParser.SubCondContext subCondContext = ProctosequelHelper.parseCondition(logicExpr);
-//        StoreNestedQueriesVisitor storeNestedQueriesVisitor = new StoreNestedQueriesVisitor();
-//        storeNestedQueriesVisitor.visit(sqlPartContext);
-//        System.out.println(storeNestedQueriesVisitor.getExpr());
-//        System.out.println(storeNestedQueriesVisitor.getRestoredExpr());
+        String logicExpr = "hhh=yy and (hh=ii and (iid = kkk and ll=uu or ll=uu) and (gg=uu or kk=uu))";
+        ParseTree subCondContext = ProctosequelHelper.parseCondition(logicExpr);
+        IsolateOrExprVisitor isolateOrExprVisitor = new IsolateOrExprVisitor();
+        isolateOrExprVisitor.visit(subCondContext);
+        StoreIsolatedOrExprVisitor storeIsolatedOrExprVisitor = new StoreIsolatedOrExprVisitor(isolateOrExprVisitor.getOrExprs());
+        storeIsolatedOrExprVisitor.visit(subCondContext);
+        System.out.println(storeIsolatedOrExprVisitor.getExpr());
+        System.out.println(storeIsolatedOrExprVisitor.getRestoredExpr());
 //        ProctosequelHelper.getProcToSequelParser(sqlpart);
     }
     
