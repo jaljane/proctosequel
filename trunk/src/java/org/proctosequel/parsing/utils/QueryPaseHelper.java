@@ -14,6 +14,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.om.composite.AliasedData;
 import org.proctosequel.parsing.om.composite.Column;
+import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.EqualMatchCondition;
 import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.Table;
@@ -21,8 +22,11 @@ import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import static org.proctosequel.parsing.utils.ProctosequelHelper.log;
 import static org.proctosequel.parsing.utils.ProctosequelHelper.parseExpr;
 import static org.proctosequel.parsing.utils.ProctosequelHelper.parseSqlPart;
-import org.proctosequel.parsing.visitors.composite.AddSpaceVisitor;
-import org.proctosequel.parsing.visitors.composite.AllTokensVisitor;
+import org.proctosequel.parsing.visitors.AddSpaceVisitor;
+import org.proctosequel.parsing.visitors.AllTokensVisitor;
+import org.proctosequel.parsing.visitors.IsolateOrExprVisitor;
+import org.proctosequel.parsing.visitors.StoreIsolatedOrExprVisitor;
+import org.proctosequel.parsing.visitors.StoreNestedQueriesVisitor;
 import org.proctosequel.utils.StringHelper;
 
 /**
@@ -34,7 +38,7 @@ public class QueryPaseHelper {
     private static List<String> joinKeywords = Arrays.asList("left", "right", "outer", "inner", "join", "on");
     private static List<String> conditionKeywords = Arrays.asList("and", "or");
     private static List<String> operatorKeywords = Arrays.asList("=", ">", "<", "<=", ">=", "<>");
-    private static List<String> parenthesisKeywords = Arrays.asList("(", ")");
+//    private static List<String> parenthesisKeywords = Arrays.asList("(", ")");
     
     public static List<String> getSepCommaTokens(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         List<String> result = new ArrayList<>();
@@ -134,7 +138,20 @@ public class QueryPaseHelper {
        
     }
     
-    public static List<JoinExp> getJoinExps(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+    public static List<Condition> getQueryConditions(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        StoreNestedQueriesVisitor storeNestedQueriesVisitor = new StoreNestedQueriesVisitor();
+        storeNestedQueriesVisitor.visit(sqlPartContext);
+        String sqlPartString = storeNestedQueriesVisitor.getExpr();
+        IsolateOrExprVisitor isolateOrExprVisitor = new IsolateOrExprVisitor();
+        StoreIsolatedOrExprVisitor storeIsolatedOrExprVisitor = new StoreIsolatedOrExprVisitor(isolateOrExprVisitor.getOrExprs());
+        storeIsolatedOrExprVisitor.visit(ProctosequelHelper.parseCondition(sqlPartString));
+        String expr = storeIsolatedOrExprVisitor.getExpr();
+//        StringUtils.replace(expr, "(", ")")
+        return null;
+    }
+    
+    
+    private static List<JoinExp> getJoinExps(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         List<String> buffer1 = new ArrayList<>();
         List<String> buffer2 = new ArrayList<>();
         
@@ -213,7 +230,7 @@ public class QueryPaseHelper {
 
     }
     
-    public static List<EqualMatchCondition> getJoinEqualMatchConditions(String varname, String expr){
+    private static List<EqualMatchCondition> getJoinEqualMatchConditions(String varname, String expr){
         List<EqualMatchCondition> result = new ArrayList<>();
         ProcToSequelGrammarParser.ExprContext exprContext = parseExpr(expr);
         AllTokensVisitor allTokensVisitor = new AllTokensVisitor();
@@ -250,6 +267,7 @@ public class QueryPaseHelper {
         return result;
     }
     
+    
     private static boolean hasJoinExpr(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         for(int i=0;i<sqlPartContext.getChildCount();i++){
             AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
@@ -269,5 +287,7 @@ public class QueryPaseHelper {
         }
         return false;
     }    
+    
+    
     
 }

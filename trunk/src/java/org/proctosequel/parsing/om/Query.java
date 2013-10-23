@@ -8,7 +8,7 @@ import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.GroupBy;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
-import org.proctosequel.parsing.visitors.composite.AddSpaceVisitor;
+import org.proctosequel.parsing.visitors.AddSpaceVisitor;
 
 /**
  *

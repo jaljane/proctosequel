@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.proctosequel.runtime;
+package org.proctosequel.main;
 
 /**
  *
