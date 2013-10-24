@@ -16,6 +16,7 @@ import org.proctosequel.parsing.om.composite.AliasedData;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.EqualMatchCondition;
+import org.proctosequel.parsing.om.composite.ExprCondition;
 import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
@@ -25,6 +26,8 @@ import static org.proctosequel.parsing.utils.ProctosequelHelper.parseSqlPart;
 import org.proctosequel.parsing.visitors.AddSpaceVisitor;
 import org.proctosequel.parsing.visitors.AllTokensVisitor;
 import org.proctosequel.parsing.visitors.IsolateOrExprVisitor;
+import org.proctosequel.parsing.visitors.RemoveTokensVisitor;
+import org.proctosequel.parsing.visitors.SplitBySepVisitor;
 import org.proctosequel.parsing.visitors.StoreIsolatedOrExprVisitor;
 import org.proctosequel.parsing.visitors.StoreNestedQueriesVisitor;
 import org.proctosequel.utils.StringHelper;
@@ -139,15 +142,28 @@ public class QueryPaseHelper {
     }
     
     public static List<Condition> getQueryConditions(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        List<Condition> result = new ArrayList<>();
         StoreNestedQueriesVisitor storeNestedQueriesVisitor = new StoreNestedQueriesVisitor();
         storeNestedQueriesVisitor.visit(sqlPartContext);
-        String sqlPartString = storeNestedQueriesVisitor.getExpr();
+        String expr = storeNestedQueriesVisitor.getExpr();
         IsolateOrExprVisitor isolateOrExprVisitor = new IsolateOrExprVisitor();
+        ParseTree exprTree = ProctosequelHelper.parseCondition(expr);
+        isolateOrExprVisitor.visit(exprTree);
         StoreIsolatedOrExprVisitor storeIsolatedOrExprVisitor = new StoreIsolatedOrExprVisitor(isolateOrExprVisitor.getOrExprs());
-        storeIsolatedOrExprVisitor.visit(ProctosequelHelper.parseCondition(sqlPartString));
-        String expr = storeIsolatedOrExprVisitor.getExpr();
-//        StringUtils.replace(expr, "(", ")")
-        return null;
+        storeIsolatedOrExprVisitor.visit(exprTree);
+        expr = storeIsolatedOrExprVisitor.getExpr();
+        RemoveTokensVisitor removeTokensVisitor = new RemoveTokensVisitor("(", ")");
+        removeTokensVisitor.visit(ProctosequelHelper.parseCondition(expr));
+        expr=removeTokensVisitor.getExpr();
+        SplitBySepVisitor splitBySepVisitor = new SplitBySepVisitor("and");
+        splitBySepVisitor.visit(ProctosequelHelper.parseCondition(expr));
+        List<String> conditions = splitBySepVisitor.getTokens();
+        for(String cond : conditions){
+            String condrestored = StringHelper.restoreAllTokens(cond, storeNestedQueriesVisitor.getTokenContent());
+            condrestored = StringHelper.restoreAllTokens(condrestored, storeIsolatedOrExprVisitor.getTokenContent());
+            result.add(new ExprCondition(condrestored));
+        }
+        return result;
     }
     
     

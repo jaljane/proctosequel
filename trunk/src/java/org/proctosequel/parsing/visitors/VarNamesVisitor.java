@@ -19,6 +19,9 @@ public class VarNamesVisitor extends ProcToSequelGrammarBaseVisitor{
     
     @Override
     public Object visitTerminal(TerminalNode tn) {
+        if("<EOF>".equals(tn.getText())){
+            return null;
+        }        
         if(Pattern.matches(Constants.VAR_NAME_REGEX, tn.getText())){
             if(!getVarNames().contains(tn.getText())){                
                 getVarNames().add(tn.getText());

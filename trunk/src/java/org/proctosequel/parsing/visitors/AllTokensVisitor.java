@@ -20,6 +20,9 @@ public class AllTokensVisitor extends ProcToSequelGrammarBaseVisitor{
     
     @Override
     public Object visitTerminal(TerminalNode tn) {
+        if("<EOF>".equals(tn.getText())){
+            return null;
+        }        
         getTokens().add(tn.getText());
         return null;
     }

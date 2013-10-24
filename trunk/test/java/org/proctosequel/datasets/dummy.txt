@@ -1,4 +1,3 @@
-
 $sample := select (select * from (select uu from jj))  bebe, expr(hh(yy,oo)) toto, uu, er(kkf) aa 
 from hht , yy dl inner join kkd dr on yy=tt and dd.ff=dr.uy
 where dd=hh and ( ll=88 and (kk=uu or kk=77));
