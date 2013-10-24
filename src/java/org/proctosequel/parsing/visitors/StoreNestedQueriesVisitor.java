@@ -28,6 +28,9 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
 
     @Override
     public Object visitTerminal(TerminalNode tn) {
+        if("<EOF>".equals(tn.getText())){
+            return null;
+        }        
         if(current !=null && ProctosequelHelper.childOf(tn, current) ){
             return null;
         }else if("select".equals(tn.getText())){

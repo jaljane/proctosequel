@@ -8,6 +8,7 @@ package org.proctosequel.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.parsing.utils.Constants;
 
@@ -45,6 +46,14 @@ public class StringHelper {
         return StringUtils.split(str, Constants.DELIMITER_CHARS)!=null 
                 && Arrays.asList(StringUtils.split(str, Constants.DELIMITER_CHARS)).contains(word) ;
         
+    }
+    
+    public static String restoreAllTokens(String expr, Map<String, String> tokens){
+        String result = expr;
+        for(Map.Entry<String, String> entry : tokens.entrySet()){
+            result = StringUtils.replace(result, entry.getKey(), entry.getValue());            
+        }
+        return result;
     }
     
 }

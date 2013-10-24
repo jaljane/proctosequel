@@ -36,6 +36,9 @@ public class StoreIsolatedOrExprVisitor  extends LogicExprGrammarBaseVisitor{
 
     @Override
     public Object visitTerminal(TerminalNode tn) {
+        if("<EOF>".equals(tn.getText())){
+            return null;
+        }        
         ParseTree parseTree = getIsolatedParent(tn);
         if(parseTree==null){
 

@@ -142,7 +142,7 @@ public class ReadQueriesCommand  implements Command {
         }
         
         for(Query query : queries.values()){
-//            query.
+            query.getConditions().addAll(QueryPaseHelper.getQueryConditions(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getWherePart()));
         }
         log.debug(queries);
     }
