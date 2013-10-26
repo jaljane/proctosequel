@@ -144,6 +144,9 @@ public class ReadQueriesCommand  implements Command {
         for(Query query : queries.values()){
             query.getConditions().addAll(QueryPaseHelper.getQueryConditions(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getWherePart()));
         }
+        for(Query query : queries.values()){
+            query.setGroupBy(QueryPaseHelper.getQueryGroupBy(query.getIdentifier(),  (ProcToSequelGrammarParser.SqlPartContext) query.getGroupPart()));
+        }
         log.debug(queries);
     }
 

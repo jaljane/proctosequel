@@ -9,7 +9,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.StringUtils;
+import org.proctosequel.antlr.LogicExprGrammarParser;
+import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.om.composite.AliasedData;
@@ -17,6 +20,7 @@ import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.EqualMatchCondition;
 import org.proctosequel.parsing.om.composite.ExprCondition;
+import org.proctosequel.parsing.om.composite.GroupBy;
 import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
@@ -152,20 +156,95 @@ public class QueryPaseHelper {
         StoreIsolatedOrExprVisitor storeIsolatedOrExprVisitor = new StoreIsolatedOrExprVisitor(isolateOrExprVisitor.getOrExprs());
         storeIsolatedOrExprVisitor.visit(exprTree);
         expr = storeIsolatedOrExprVisitor.getExpr();
-        RemoveTokensVisitor removeTokensVisitor = new RemoveTokensVisitor("(", ")");
+        //"(", ")"
+        RemoveTokensVisitor removeTokensVisitor = new RemoveTokensVisitor(new RemoveTokensVisitor.TokenFilter() {
+
+            @Override
+            public boolean accept(TerminalNode tn) {
+                return tn.getParent() instanceof LogicExprGrammarParser.SubCondContext && ("(".equals(tn.getText()) || ")".equals(tn.getText()));
+            }
+        });
         removeTokensVisitor.visit(ProctosequelHelper.parseCondition(expr));
         expr=removeTokensVisitor.getExpr();
         SplitBySepVisitor splitBySepVisitor = new SplitBySepVisitor("and");
         splitBySepVisitor.visit(ProctosequelHelper.parseCondition(expr));
         List<String> conditions = splitBySepVisitor.getTokens();
         for(String cond : conditions){
+
             String condrestored = StringHelper.restoreAllTokens(cond, storeNestedQueriesVisitor.getTokenContent());
             condrestored = StringHelper.restoreAllTokens(condrestored, storeIsolatedOrExprVisitor.getTokenContent());
-            result.add(new ExprCondition(condrestored));
+            EqualMatchCondition condition= getEqualMatchCondition(varname, ProctosequelHelper.parseSqlPart(condrestored) );
+            if(condition !=null){
+                result.add(condition);
+            }else {
+                result.add(new ExprCondition(condrestored));
+            }
+            
         }
         return result;
     }
     
+    public static EqualMatchCondition getEqualMatchCondition(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        String leftOperand = "";
+        String rightOperand = "";
+        ParseTree expr = sqlPartContext;
+        if(sqlPartContext.getChildCount() == 1){            
+            if(!(sqlPartContext.getChild(0) instanceof ProcToSequelGrammarParser.ExprContext)){
+               throw new SemanticsError(String.format(Errors.bad_or_unsupported_logic_condition, varname));               
+            }
+            expr = (ProcToSequelGrammarParser.ExprContext) sqlPartContext.getChild(0);            
+        }
+        boolean shift = false;
+        for(int i = 0; i< expr.getChildCount();i++){
+            if("=".equals(expr.getChild(i).getText())){
+                shift = true;
+                continue;
+            }
+            if(!shift){
+                AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
+                addSpaceVisitor.visit(expr.getChild(i));
+                if(StringUtils.startsWithAny(addSpaceVisitor.getExpr(), Constants.QUALIFIER_SEP_CHARS)){
+                    leftOperand += addSpaceVisitor.getExpr();
+                }else {
+                    leftOperand += " " + addSpaceVisitor.getExpr();
+                }                
+            }else {
+                AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
+                addSpaceVisitor.visit(expr.getChild(i));
+                if(StringUtils.startsWithAny(addSpaceVisitor.getExpr(), Constants.QUALIFIER_SEP_CHARS)){
+                    rightOperand += addSpaceVisitor.getExpr();
+                }else {
+                    rightOperand += " " + addSpaceVisitor.getExpr();
+                }                 
+            }
+        }
+        if(StringUtils.isBlank(rightOperand)){
+            return null;
+        }
+        return new EqualMatchCondition(new Column(null, leftOperand) , new Column(null, rightOperand) );
+    }
+    
+    
+    public static GroupBy getQueryGroupBy(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        if(sqlPartContext!=null){
+            SplitBySepVisitor splitBySepVisitor = new SplitBySepVisitor("having");
+            splitBySepVisitor.visit(sqlPartContext);
+            if(splitBySepVisitor.getTokens().size() < 1 || splitBySepVisitor.getTokens().size() > 2){
+                throw new SemanticsError(String.format(Errors.bad_or_unsupported_groupby, varname) );            
+            }else{
+                 List<String> groupByExprs = getSepCommaTokens(varname, ProctosequelHelper.parseSqlPart(splitBySepVisitor.getTokens().get(0)));
+                 GroupBy groupBy = new GroupBy();
+                 groupBy.getExprs().addAll(groupByExprs);
+                 if(splitBySepVisitor.getTokens().size() == 2){
+                    groupBy.setHavingexpr(splitBySepVisitor.getTokens().get(1));    
+                 }
+                 return groupBy;
+            }            
+        }else {
+            return null;
+        }
+        
+    }
     
     private static List<JoinExp> getJoinExps(String varname, ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         List<String> buffer1 = new ArrayList<>();
@@ -304,6 +383,11 @@ public class QueryPaseHelper {
         return false;
     }    
     
-    
+    public static void main(String[] args){
+        ProcToSequelGrammarParser.SqlPartContext sqlPartContext = ProctosequelHelper.parseSqlPart("(select yy.jj from fjjjf where kkk= ii)=llf(hh.kkfj, kkf.kkj)");
+        ProcToSequelGrammarParser parser= ProctosequelHelper.getProcToSequelParser("(select yy.jj from fjjjf where kkk= ii)=llf(hh.kkfj, kkf.kkj)");
+        sqlPartContext.inspect(parser);
+        
+    }
     
 }
