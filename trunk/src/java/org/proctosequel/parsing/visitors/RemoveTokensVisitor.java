@@ -5,9 +5,6 @@
 
 package org.proctosequel.parsing.visitors;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
@@ -19,11 +16,11 @@ import org.proctosequel.parsing.utils.Constants;
  */
 public class RemoveTokensVisitor extends ProcToSequelGrammarBaseVisitor{
     
-    private String[] tokens;
+    TokenFilter filter;
     private String expr = "";
     
-    public RemoveTokensVisitor(String... tokens) {
-        this.tokens = tokens;
+    public RemoveTokensVisitor(TokenFilter filter) {
+        this.filter = filter;
     }
 
     @Override
@@ -31,7 +28,7 @@ public class RemoveTokensVisitor extends ProcToSequelGrammarBaseVisitor{
         if("<EOF>".equals(tn.getText())){
             return null;
         }        
-        if(!Arrays.asList(tokens).contains(tn.getText())){
+        if(!filter.accept(tn)){
             if(StringUtils.startsWithAny(tn.getText(), Constants.QUALIFIER_SEP_CHARS)){
                 expr += tn.getText();
             }else {
@@ -47,6 +44,10 @@ public class RemoveTokensVisitor extends ProcToSequelGrammarBaseVisitor{
      */
     public String getExpr() {
         return expr;
+    }
+    
+    public static interface TokenFilter{
+        boolean accept(TerminalNode tn);
     }
 
     
