@@ -173,7 +173,9 @@ public class Query {
         this.groupBy = groupBy;
     }
 
-
+    public String getSQL(){
+        return "todo";
+    }
     
    
 }

@@ -46,7 +46,7 @@ public class RemoveTokensVisitor extends ProcToSequelGrammarBaseVisitor{
         return expr;
     }
     
-    public static interface TokenFilter{
+    public interface TokenFilter{
         boolean accept(TerminalNode tn);
     }
 
