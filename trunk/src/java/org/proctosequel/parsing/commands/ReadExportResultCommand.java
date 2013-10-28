@@ -1,6 +1,7 @@
 
 package org.proctosequel.parsing.commands;
 
+import org.proctosequel.Command;
 import java.util.ArrayList;
 import java.util.List;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
