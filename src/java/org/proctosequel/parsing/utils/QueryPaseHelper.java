@@ -363,7 +363,7 @@ public class QueryPaseHelper {
     }
     
     
-    private static boolean hasJoinExpr(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+    public static boolean hasJoinExpr(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         for(int i=0;i<sqlPartContext.getChildCount();i++){
             AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
             addSpaceVisitor.visit(sqlPartContext.getChild(i));
@@ -374,7 +374,7 @@ public class QueryPaseHelper {
         return false;        
     }
     
-    private static boolean hasSelectStmt(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+    public static boolean hasSelectStmt(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
         for(int i=0;i<sqlPartContext.getChildCount();i++){
             if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.SelectStmtContext){
                 return true;

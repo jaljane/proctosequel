@@ -6,7 +6,6 @@ package org.proctosequel.parsing.visitors;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
@@ -35,8 +34,8 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
             return null;
         }else if("select".equals(tn.getText())){
             current=(ProcToSequelGrammarParser.SelectStmtContext) tn.getParent();
-            nestedQueryByToken.put("ProcToSequelGrammarParser.SelectStmtContext" + counter, current);
-            tokenByNestedQuery.put(current, "ProcToSequelGrammarParser.SelectStmtContext" + counter);
+            getNestedQueryByToken().put("ProcToSequelGrammarParser.SelectStmtContext" + counter, current);
+            getTokenByNestedQuery().put(current, "ProcToSequelGrammarParser.SelectStmtContext" + counter);
             expr+=" " + "ProcToSequelGrammarParser.SelectStmtContext" + counter;
             counter++;
         }else {
@@ -57,7 +56,7 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
     
     public String getRestoredExpr(){
         String buffer = expr;
-        for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext > entry : nestedQueryByToken.entrySet()){
+        for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext > entry : getNestedQueryByToken().entrySet()){
             AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
             addSpaceVisitor.visit(entry.getValue());
             buffer = StringUtils.replace(buffer, entry.getKey(), addSpaceVisitor.getExpr());
@@ -68,7 +67,7 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
     
     public Map<String, String> getTokenContent(){
         Map<String, String> result = new HashMap<>();
-        for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext> entry :  nestedQueryByToken.entrySet()){
+        for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext> entry :  getNestedQueryByToken().entrySet()){
             AddSpaceVisitor addSpaceVisitor = new AddSpaceVisitor();
             addSpaceVisitor.visit(entry.getValue());
             result.put(entry.getKey(), addSpaceVisitor.getExpr());
@@ -84,6 +83,20 @@ public class StoreNestedQueriesVisitor  extends ProcToSequelGrammarBaseVisitor {
         System.out.println(storeNestedQueriesVisitor.getExpr());
         System.out.println(storeNestedQueriesVisitor.getRestoredExpr());
 //        ProctosequelHelper.getProcToSequelParser(sqlpart);
+    }
+
+    /**
+     * @return the nestedQueryByToken
+     */
+    public Map<String, ProcToSequelGrammarParser.SelectStmtContext> getNestedQueryByToken() {
+        return nestedQueryByToken;
+    }
+
+    /**
+     * @return the tokenByNestedQuery
+     */
+    public Map<ProcToSequelGrammarParser.SelectStmtContext, String> getTokenByNestedQuery() {
+        return tokenByNestedQuery;
     }
     
 }
