@@ -17,7 +17,7 @@ import org.proctosequel.parsing.utils.QueryPaseHelper;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class ParseQueryCommand implements Command{
     
