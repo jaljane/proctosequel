@@ -38,6 +38,17 @@ public class TableJoinExpr {
         return joinExps;
     }
 
-    
+    public String getSQL(){
+        if(table!=null){
+            return table.getSQL();
+        }else {
+            String sql ="";
+            for(int i=0;i<joinExps.size();i++){
+                sql+=" "+ joinExps.get(i).getSQL();
+            }
+            return sql;
+        }
+        
+    }
 
 }

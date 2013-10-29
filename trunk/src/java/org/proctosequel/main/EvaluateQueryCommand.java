@@ -34,34 +34,27 @@ public class EvaluateQueryCommand implements Command{
     
     @Override
     public void execute() {
+        
+        for(TableJoinExpr tableJoinExpr : query.getTableJoinExprs()){
+            if(tableJoinExpr.getTable()!=null){
+                ProcToSequelGrammarParser.SqlPartContext sqlPartContext = ProctosequelHelper.parseSqlPart(tableJoinExpr.getTable().getExpr());
+                if(QueryPaseHelper.hasSelectStmt(sqlPartContext)){
+                    String expr = evaluateNestedQueries(sqlPartContext);
+                }
+            }
+        }
+        
         for(Column column : query.getColumns() ){
             ProcToSequelGrammarParser.SqlPartContext sqlPart = ProctosequelHelper.parseSqlPart(column.getExpr());
             if(QueryPaseHelper.hasSelectStmt(sqlPart)){
-                Map<String, String> nestedQueryResult = new HashMap<>();
-                StoreNestedQueriesVisitor storeNestedQueriesVisitor = new StoreNestedQueriesVisitor();
-                storeNestedQueriesVisitor.visit(sqlPart);
-                if(!storeNestedQueriesVisitor.getTokenContent().isEmpty()){
-                    for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext> nested : storeNestedQueriesVisitor.getNestedQueryByToken().entrySet()){
-                        ParseQueryCommand parseQueryCommand = new ParseQueryCommand("$$", nested.getValue());
-                        parseQueryCommand.execute();                    
-                        EvaluateQueryCommand evaluateQueryCommand = new EvaluateQueryCommand(parseQueryCommand.getQuery());
-                        evaluateQueryCommand.execute();
-                        nestedQueryResult.put(nested.getKey(), evaluateQueryCommand.getResult().getSQL());                        
-                    }
-                }
-                String expr = storeNestedQueriesVisitor.getExpr();
-                for(Map.Entry<String, String> entry : nestedQueryResult.entrySet()){
-                    expr = StringUtils.replace(expr, entry.getKey(), entry.getValue());
-                }
+                String expr = evaluateNestedQueries(sqlPart);
                 result.getColumns().add(new Column(column.getAlias(), expr));                
             }else{
                 throw new UnsupportedOperationException("do it!");
 //                result.getColumns().add(column);
             }
         }
-        for(TableJoinExpr tableJoinExpr : query.getTableJoinExprs()){
-            throw new UnsupportedOperationException("do it!");
-        }
+
         for(Condition condition : query.getConditions()){
             throw new UnsupportedOperationException("do it!");
         }
@@ -69,6 +62,27 @@ public class EvaluateQueryCommand implements Command{
         
     }
 
+    
+    private String evaluateNestedQueries(ProcToSequelGrammarParser.SqlPartContext sqlPart){
+        Map<String, String> nestedQueryResult = new HashMap<>();
+        StoreNestedQueriesVisitor storeNestedQueriesVisitor = new StoreNestedQueriesVisitor();
+        storeNestedQueriesVisitor.visit(sqlPart);
+        if(!storeNestedQueriesVisitor.getTokenContent().isEmpty()){
+            for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext> nested : storeNestedQueriesVisitor.getNestedQueryByToken().entrySet()){
+                ParseQueryCommand parseQueryCommand = new ParseQueryCommand("$$", nested.getValue());
+                parseQueryCommand.execute();                    
+                EvaluateQueryCommand evaluateQueryCommand = new EvaluateQueryCommand(parseQueryCommand.getQuery());
+                evaluateQueryCommand.execute();
+                nestedQueryResult.put(nested.getKey(), evaluateQueryCommand.getResult().getSQL());                        
+            }
+        }
+        String expr = storeNestedQueriesVisitor.getExpr();
+        for(Map.Entry<String, String> entry : nestedQueryResult.entrySet()){
+            expr = StringUtils.replace(expr, entry.getKey(), entry.getValue());
+        }
+        return expr;
+    } 
+    
     /**
      * @return the result
      */

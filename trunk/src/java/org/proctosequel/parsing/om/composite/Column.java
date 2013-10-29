@@ -39,4 +39,8 @@ public class Column extends AliasedData{
         this.table = table;
     }
     
+    public String getSQL (){
+        return getExpr() + " " + (getAlias()==null?"":getAlias());
+    }
+    
 }

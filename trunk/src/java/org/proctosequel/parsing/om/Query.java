@@ -24,7 +24,6 @@ public class Query {
     private List<TableJoinExpr> tableJoinExprs = new ArrayList<>();
     private List<Condition> conditions = new ArrayList<>();
     private GroupBy groupBy;
-    private List<Query> dependsOn = new ArrayList<>();
     /**
      * @return the identifier
      */
@@ -95,22 +94,8 @@ public class Query {
     public void setGroupPart(ParseTree groupPart) {
         this.groupPart = groupPart;
     }
-
-    /**
-     * @return the dependsOn
-     */
-    public List<Query> getDependsOn() {
-        return dependsOn;
-    }
     
-    /**
-     * @param dependsOn the dependsOn to set
-     */
-    public void setDependsOn(List<Query> dependsOn) {
-        this.dependsOn = dependsOn;
-    }
-    
-        @Override
+    @Override
     public String toString() {
         String result = "";
         AddSpaceVisitor visitor = new AddSpaceVisitor();
@@ -174,7 +159,22 @@ public class Query {
     }
 
     public String getSQL(){
-        return "todo";
+        String sql = "select ";
+        sql+=columns.get(0).getSQL();
+        for(int i=1;i<columns.size();i++){
+            sql+=", " + columns.get(i).getSQL();
+        }
+        sql+=" from ";
+        sql+=tableJoinExprs.get(0).getSQL();
+        for(int i=1;i<tableJoinExprs.size();i++){
+            sql+=", " + tableJoinExprs.get(i).getSQL();
+        }
+        sql+=" where ";
+        sql+=conditions.get(0).getSQL();
+        for(int i=1;i<conditions.size();i++){
+            sql+=", " + conditions.get(i).getSQL();
+        }
+        return sql;
     }
     
    

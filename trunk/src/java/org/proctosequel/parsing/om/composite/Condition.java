@@ -6,4 +6,5 @@ package org.proctosequel.parsing.om.composite;
  */
 public interface Condition {
 
+    String getSQL();
 }

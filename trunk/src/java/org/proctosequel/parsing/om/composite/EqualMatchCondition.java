@@ -27,6 +27,8 @@ public class EqualMatchCondition implements Condition{
         return column2;
     }
     
-    
+    public String getSQL (){
+        return column1.getExpr() + "="+ column2.getExpr();
+    }
         
 }

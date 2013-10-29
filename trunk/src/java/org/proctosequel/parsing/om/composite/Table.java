@@ -34,4 +34,7 @@ public class Table extends AliasedData{
         this.metadata = metadata;
     }
 
+    public String getSQL (){
+        return getExpr() + " " + (getAlias()==null?"":getAlias());
+    }    
 }
