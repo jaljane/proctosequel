@@ -69,4 +69,17 @@ public class JoinExp {
         return conditions;
     }
     
+    public String getSQL(){
+        String sql = "";
+        if(leftTables.size() == 1){
+            sql = leftTables.get(0).getSQL();    
+        }        
+        sql+=" " + join + " " + rightTable.getSQL();
+        sql+=" on " + conditions.get(0).getSQL();
+        for(int i=1;i<conditions.size();i++){
+            sql+=" and " + conditions.get(i).getSQL();
+        }
+        return sql;
+    }
+    
 }

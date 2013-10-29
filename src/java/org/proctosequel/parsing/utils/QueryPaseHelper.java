@@ -382,6 +382,17 @@ public class QueryPaseHelper {
         }
         return false;
     }    
+         
+    public static boolean isQueryIdentifier(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
+        for(int i=0;i<sqlPartContext.getChildCount();i++){
+            if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.ExprContext 
+                    && Pattern.matches(Constants.VAR_NAME_REGEX, sqlPartContext.getChild(i).getChild(0).getText()) ){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     
     public static void main(String[] args){
         ProcToSequelGrammarParser.SqlPartContext sqlPartContext = ProctosequelHelper.parseSqlPart("(select yy.jj from fjjjf where kkk= ii)=llf(hh.kkfj, kkf.kkj)");

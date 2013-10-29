@@ -20,6 +20,9 @@ public class ExprCondition implements Condition{
         return expr;
     }
     
+    public String getSQL(){
+        return expr;
+    }
     
     
 }

@@ -2,6 +2,7 @@ package org.proctosequel.parsing.om.composite;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -36,7 +37,14 @@ public class GroupBy {
         this.havingexpr = havingexpr;
     }
    
-    
+    public String getSQL (){
+        String sql = exprs.get(0);
+        for(int i=1;i<exprs.size();i++){
+            sql+=", " + exprs.get(i);
+        }
+        sql+=(StringUtils.isEmpty(havingexpr)?"": " having " + havingexpr);
+        return sql;
+    }
     
 
 }
