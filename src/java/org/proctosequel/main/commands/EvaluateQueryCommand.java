@@ -1,19 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.proctosequel.main.commands;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.Command;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.QueryDefCache;
 import org.proctosequel.main.exception.QueryEvalException;
 import org.proctosequel.main.utils.QueryEvalHelper;
-import org.proctosequel.parsing.commands.nested.ParseQueryCommand;
 import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
@@ -21,7 +12,6 @@ import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
 import org.proctosequel.parsing.utils.QueryParseHelper;
-import org.proctosequel.parsing.visitors.StoreNestedQueriesVisitor;
 
 /**
  *

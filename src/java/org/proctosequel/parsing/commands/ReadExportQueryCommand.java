@@ -1,4 +1,3 @@
-
 package org.proctosequel.parsing.commands;
 
 import org.proctosequel.Command;

@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.proctosequel.main.commands.nested;
 
 import org.proctosequel.Command;
@@ -15,12 +10,10 @@ import org.proctosequel.parsing.om.Query;
 public class SimplifyQueryCommand implements Command{
 
     private Query query;
-    private Query nested;
     private Query result;
 
-    public SimplifyQueryCommand(Query query, Query nested, Query result) {
-        this.query = query;
-        this.nested = nested;
+    public SimplifyQueryCommand(Query query, Query result) {
+        this.query = query;        
         this.result = result;
     }
     
@@ -34,13 +27,6 @@ public class SimplifyQueryCommand implements Command{
      */
     public Query getQuery() {
         return query;
-    }
-
-    /**
-     * @return the nested
-     */
-    public Query getNested() {
-        return nested;
     }
 
     /**
