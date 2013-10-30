@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package org.proctosequel.main;
+package org.proctosequel.main.commands.nested;
 
 import org.proctosequel.Command;
 import org.proctosequel.parsing.om.Query;
@@ -12,15 +12,16 @@ import org.proctosequel.parsing.om.Query;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class JoinQueryCommand implements Command{
+public class SimplifyQueryCommand implements Command{
 
     private Query query;
     private Query nested;
     private Query result;
 
-    public JoinQueryCommand(Query query, Query nested) {
+    public SimplifyQueryCommand(Query query, Query nested, Query result) {
         this.query = query;
         this.nested = nested;
+        this.result = result;
     }
     
     @Override

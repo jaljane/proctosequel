@@ -40,7 +40,7 @@ import org.proctosequel.utils.StringHelper;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class QueryPaseHelper {
+public class QueryParseHelper {
     
     private static List<String> joinKeywords = Arrays.asList("left", "right", "outer", "inner", "join", "on");
     private static List<String> conditionKeywords = Arrays.asList("and", "or");
@@ -384,13 +384,7 @@ public class QueryPaseHelper {
     }    
          
     public static boolean isQueryIdentifier(ProcToSequelGrammarParser.SqlPartContext sqlPartContext){
-        for(int i=0;i<sqlPartContext.getChildCount();i++){
-            if(sqlPartContext.getChild(i) instanceof ProcToSequelGrammarParser.ExprContext 
-                    && Pattern.matches(Constants.VAR_NAME_REGEX, sqlPartContext.getChild(i).getChild(0).getText()) ){
-                return true;
-            }
-        }
-        return false;
+        return Pattern.matches(Constants.VAR_NAME_REGEX, sqlPartContext.getText());
     }
     
     

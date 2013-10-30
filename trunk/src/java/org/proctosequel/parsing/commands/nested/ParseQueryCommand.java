@@ -13,7 +13,7 @@ import org.proctosequel.parsing.om.composite.AliasedData;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
-import org.proctosequel.parsing.utils.QueryPaseHelper;
+import org.proctosequel.parsing.utils.QueryParseHelper;
 
 /**
  *
@@ -85,18 +85,18 @@ public class ParseQueryCommand implements Command{
             }  
 
         }
-        List<String> selectParts = QueryPaseHelper.getSepCommaTokens(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
+        List<String> selectParts = QueryParseHelper.getSepCommaTokens(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getSelectPart());
         for(String selectPart : selectParts){
-            AliasedData aliasedData= QueryPaseHelper.getAliasedData(query.getIdentifier(), ProctosequelHelper.parseSqlPart(selectPart));
+            AliasedData aliasedData= QueryParseHelper.getAliasedData(query.getIdentifier(), ProctosequelHelper.parseSqlPart(selectPart));
             query.getColumns().add(new Column(aliasedData));
             log.debug(new Column(aliasedData) + " added");
         }
 
         // get tables and joins
-        List<TableJoinExpr> tableJoinExprs = QueryPaseHelper.getTableJoinExpr(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getFromPart());
+        List<TableJoinExpr> tableJoinExprs = QueryParseHelper.getTableJoinExpr(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getFromPart());
         query.getTableJoinExprs().addAll(tableJoinExprs);
-        query.getConditions().addAll(QueryPaseHelper.getQueryConditions(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getWherePart()));
-        query.setGroupBy(QueryPaseHelper.getQueryGroupBy(query.getIdentifier(),  (ProcToSequelGrammarParser.SqlPartContext) query.getGroupPart()));
+        query.getConditions().addAll(QueryParseHelper.getQueryConditions(query.getIdentifier(), (ProcToSequelGrammarParser.SqlPartContext) query.getWherePart()));
+        query.setGroupBy(QueryParseHelper.getQueryGroupBy(query.getIdentifier(),  (ProcToSequelGrammarParser.SqlPartContext) query.getGroupPart()));
     }
 
     /**
