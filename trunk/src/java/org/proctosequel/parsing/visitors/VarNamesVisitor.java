@@ -1,5 +1,3 @@
-
-
 package org.proctosequel.parsing.visitors;
 
 import java.util.ArrayList;

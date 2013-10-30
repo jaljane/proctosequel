@@ -1,4 +1,3 @@
-
 package org.proctosequel.main.db;
 
 import java.sql.Connection;

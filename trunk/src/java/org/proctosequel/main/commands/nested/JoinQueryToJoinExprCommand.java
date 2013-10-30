@@ -1,14 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.proctosequel.main.commands.nested;
 
-import java.util.List;
 import org.proctosequel.Command;
 import org.proctosequel.parsing.om.Query;
-import org.proctosequel.parsing.om.composite.TableJoinExpr;
+import org.proctosequel.parsing.om.composite.JoinExp;
 
 /**
  *
@@ -16,12 +10,12 @@ import org.proctosequel.parsing.om.composite.TableJoinExpr;
  */
 public class JoinQueryToJoinExprCommand implements Command{
 
-    private TableJoinExpr tableJoinExpr;
-    private List<Query> nested;
+    private JoinExp joinExpr;
+    private Query nested;
     private Query result;
 
-    public JoinQueryToJoinExprCommand(TableJoinExpr tableJoinExpr, List<Query> nested, Query result) {
-        this.tableJoinExpr = tableJoinExpr;
+    public JoinQueryToJoinExprCommand(JoinExp joinExpr, Query nested, Query result) {
+        this.joinExpr = joinExpr;
         this.nested = nested;
         this.result = result;
     }
