@@ -18,7 +18,8 @@ public class ProctosequelPropertiesConfigurator {
         Properties properties = new Properties();
         properties.load(ProctosequelPropertiesConfigurator.class.getResourceAsStream(resourcePath));
         System.getProperties().put("proctosequel.datasource.naming", properties.get("datasource"));
-        System.getProperties().put("proctosequel.schemas", properties.get("schemas"));               
+        System.getProperties().put("proctosequel.schemas", properties.get("schemas"));
+        System.getProperties().put("proctosequel.queryDefs", properties.get("queryDefs"));
     }
     
 }

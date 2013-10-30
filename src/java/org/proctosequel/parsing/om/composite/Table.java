@@ -2,7 +2,7 @@
 package org.proctosequel.parsing.om.composite;
 
 import java.util.List;
-import org.proctosequel.db.om.DbColumn;
+import org.proctosequel.main.db.om.DbColumn;
 
 /**
  *

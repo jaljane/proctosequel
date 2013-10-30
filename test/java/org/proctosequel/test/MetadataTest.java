@@ -1,7 +1,7 @@
 package org.proctosequel.test;
 
 import org.junit.Test;
-import org.proctosequel.db.MetadataCache;
+import org.proctosequel.main.db.MetadataCache;
 
 /**
  *
