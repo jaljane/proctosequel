@@ -27,7 +27,7 @@ import org.proctosequel.utils.FileHelper;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class QueryDefCache {
 
@@ -75,10 +75,10 @@ public class QueryDefCache {
         }
     }
     
-    public void reload() throws IOException{
+    public static void reload() throws IOException{
         synchronized(QueryDefCache.class){
-            clear();
-            init();
+            queryDefCache.clear();
+            queryDefCache.init();
         }
     }
     
