@@ -8,7 +8,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.LogicExprGrammarParser;
-import org.proctosequel.antlr.ProcToSequelGrammarLexer;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.om.composite.AliasedData;

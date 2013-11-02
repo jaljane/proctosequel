@@ -37,4 +37,6 @@ public class Table extends AliasedData{
     public String getSQL (){
         return getExpr() + " " + (getAlias()==null?"":getAlias());
     }    
+    
+    
 }

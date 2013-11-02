@@ -16,9 +16,14 @@ import org.proctosequel.parsing.visitors.StoreNestedQueriesVisitor;
 public class QueryEvalHelper {
 
     
+    public static Query evaluateQuery(Query query){                  
+        EvaluateQueryCommand evaluateQueryCommand = new EvaluateQueryCommand(query);
+        evaluateQueryCommand.execute();     
+        return evaluateQueryCommand.getResult();
+    }    
     
     public static Query evaluateNestedQuery(ProcToSequelGrammarParser.SelectStmtContext selectStmtContext){
-        ParseQueryCommand parseQueryCommand = new ParseQueryCommand("$$", selectStmtContext);
+        ParseQueryCommand parseQueryCommand = new ParseQueryCommand("$anonymous", selectStmtContext);
         parseQueryCommand.execute();                    
         EvaluateQueryCommand evaluateQueryCommand = new EvaluateQueryCommand(parseQueryCommand.getQuery());
         evaluateQueryCommand.execute();     
@@ -31,7 +36,7 @@ public class QueryEvalHelper {
         storeNestedQueriesVisitor.visit(sqlPart);
         if(!storeNestedQueriesVisitor.getTokenContent().isEmpty()){
             for(Map.Entry<String, ProcToSequelGrammarParser.SelectStmtContext> nested : storeNestedQueriesVisitor.getNestedQueryByToken().entrySet()){
-                ParseQueryCommand parseQueryCommand = new ParseQueryCommand("$$", nested.getValue());
+                ParseQueryCommand parseQueryCommand = new ParseQueryCommand("$anonymous", nested.getValue());
                 parseQueryCommand.execute();                    
                 EvaluateQueryCommand evaluateQueryCommand = new EvaluateQueryCommand(parseQueryCommand.getQuery());
                 evaluateQueryCommand.execute();
