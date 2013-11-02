@@ -24,6 +24,17 @@ public class Query {
     private List<TableJoinExpr> tableJoinExprs = new ArrayList<>();
     private List<Condition> conditions = new ArrayList<>();
     private GroupBy groupBy;
+//    private Eva
+
+    public Query() {
+    }
+
+    public Query(String identifier) {
+        this.identifier = identifier;
+    }
+    
+    
+    
     /**
      * @return the identifier
      */

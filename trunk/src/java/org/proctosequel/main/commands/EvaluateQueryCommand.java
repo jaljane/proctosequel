@@ -1,13 +1,19 @@
 package org.proctosequel.main.commands;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.proctosequel.Command;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
+import org.proctosequel.main.commands.nested.JoinQueryToJoinExprCommand;
+import org.proctosequel.main.commands.nested.JoinQueryToQueryCommand;
 import org.proctosequel.parsing.QueryDefCache;
 import org.proctosequel.main.exception.QueryEvalException;
 import org.proctosequel.main.utils.QueryEvalHelper;
 import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
+import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
@@ -19,16 +25,21 @@ import org.proctosequel.parsing.utils.QueryParseHelper;
  */
 public class EvaluateQueryCommand implements Command{
 
-    private Query query;
-    private Query result;
+    private QueryEvalContext queryEvalContext;
 
     public EvaluateQueryCommand(Query query) {
-        this.query = query;
+        this.queryEvalContext = new QueryEvalContext(query);
+        this.queryEvalContext.setResult(new Query());
     }
     
+    public EvaluateQueryCommand(QueryEvalContext queryEvalContext) {
+        this.queryEvalContext = queryEvalContext;
+    }    
     @Override
     public void execute() {
         try{
+            Query query = queryEvalContext.query;
+            Query result = queryEvalContext.result;
             for(TableJoinExpr tableJoinExpr : query.getTableJoinExprs()){
                 if(tableJoinExpr.getTable()!=null){
                     ProcToSequelGrammarParser.SqlPartContext sqlPartContext = ProctosequelHelper.parseSqlPart(tableJoinExpr.getTable().getExpr());
@@ -39,14 +50,20 @@ public class EvaluateQueryCommand implements Command{
                         result.getTableJoinExprs().add(tableJoinExpr1);
                     }else if(QueryParseHelper.isQueryIdentifier(sqlPartContext)){
                         Query nested = QueryDefCache.getInstance().getQueries().get(sqlPartContext.getText());
-                        TableJoinExpr tableJoinExpr1 = new TableJoinExpr();
-//                        tableJoinExpr1.setTable(new Table(tableJoinExpr.getTable().getAlias(), expr));
-                        result.getTableJoinExprs().add(tableJoinExpr1);                        
+                        nested = QueryEvalHelper.evaluateQuery(nested);
+                        queryEvalContext.evaluatedQueries.put(sqlPartContext.getText(), nested);
+                        JoinQueryToQueryCommand joinQueryToQueryCommand = new JoinQueryToQueryCommand(queryEvalContext, nested);
+                        joinQueryToQueryCommand.execute();
                     }else {
-                        
+                        result.getTableJoinExprs().add(tableJoinExpr);
                     }
                 }else {
-    //                tableJoinExpr.getJoinExps().get(0).getLeftTables().get(0).getExpr()
+                    for(JoinExp joinExp : tableJoinExpr.getJoinExps()){
+                        
+                        JoinQueryToJoinExprCommand joinQueryToJoinExprCommand = new JoinQueryToJoinExprCommand(joinExp, result);
+                        joinQueryToJoinExprCommand.execute();
+                        
+                    }
                 }
             }
 
@@ -76,7 +93,111 @@ public class EvaluateQueryCommand implements Command{
      * @return the result
      */
     public Query getResult() {
-        return result;
+        return queryEvalContext.getResult();
+    }
+    
+    public static class QueryEvalContext {
+        private Query query;
+        private Query result;    
+        private Map<String, Table> tableAliases = new HashMap<>();
+        private Map<String, Query> evaluatedQueries = new HashMap<>();   
+        private Map<Query, List<Table>> tableMapping = new HashMap<>();
+        private int aliasCounter = 0;
+
+        public QueryEvalContext(Query query, Query result) {
+            this.query = query;
+            this.result = result;
+        }
+
+        public QueryEvalContext(Query query) {
+            this.query = query;            
+        }
+        
+        
+        /**
+         * @return the query
+         */
+        public Query getQuery() {
+            return query;
+        }
+
+        /**
+         * @param query the query to set
+         */
+        public void setQuery(Query query) {
+            this.query = query;
+        }
+
+        /**
+         * @return the result
+         */
+        public Query getResult() {
+            return result;
+        }
+
+        /**
+         * @param result the result to set
+         */
+        public void setResult(Query result) {
+            this.result = result;
+        }
+
+        /**
+         * @return the tableAliases
+         */
+        public Map<String, Table> getTableAliases() {
+            return tableAliases;
+        }
+
+        /**
+         * @param tableAliases the tableAliases to set
+         */
+        public void setTableAliases(Map<String, Table> tableAliases) {
+            this.tableAliases = tableAliases;
+        }
+
+        /**
+         * @return the anonymousQueries
+         */
+        public Map<String, Query> getEvaluatedQueries() {
+            return evaluatedQueries;
+        }
+
+        /**
+         * @param anonymousQueries the anonymousQueries to set
+         */
+        public void setEvaluatedQueries(Map<String, Query> evaluatedQueries) {
+            this.evaluatedQueries = evaluatedQueries;
+        }
+
+        /**
+         * @return the tableMapping
+         */
+        public Map<Query, List<Table>> getTableMapping() {
+            return tableMapping;
+        }
+
+        /**
+         * @param tableMapping the tableMapping to set
+         */
+        public void setTableMapping(Map<Query, List<Table>> tableMapping) {
+            this.tableMapping = tableMapping;
+        }
+
+        /**
+         * @return the aliasCounter
+         */
+        public int getAliasCounter() {
+            return aliasCounter;
+        }
+
+        /**
+         * @param aliasCounter the aliasCounter to set
+         */
+        public void setAliasCounter(int aliasCounter) {
+            this.aliasCounter = aliasCounter;
+        }
+        
     }
 
 }

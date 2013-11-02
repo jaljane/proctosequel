@@ -11,12 +11,10 @@ import org.proctosequel.parsing.om.composite.JoinExp;
 public class JoinQueryToJoinExprCommand implements Command{
 
     private JoinExp joinExpr;
-    private Query nested;
     private Query result;
 
-    public JoinQueryToJoinExprCommand(JoinExp joinExpr, Query nested, Query result) {
+    public JoinQueryToJoinExprCommand(JoinExp joinExpr, Query result) {
         this.joinExpr = joinExpr;
-        this.nested = nested;
         this.result = result;
     }
     
