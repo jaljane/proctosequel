@@ -13,13 +13,12 @@ import org.proctosequel.parsing.QueryDefCache;
 import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
-import org.proctosequel.parsing.utils.ProctosequelHelper;
 import org.proctosequel.parsing.utils.QueryParseHelper;
 import org.proctosequel.parsing.visitors.AddSpaceVisitor;
 
 /**
  *
- * @author Jamel
+ * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
 public class JoinSqlPartToQueryCommand  implements Command {
 
