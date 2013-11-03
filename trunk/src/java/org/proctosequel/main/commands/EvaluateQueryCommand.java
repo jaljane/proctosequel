@@ -7,6 +7,7 @@ import org.proctosequel.Command;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.main.commands.nested.JoinQueryToJoinExprCommand;
 import org.proctosequel.main.commands.nested.JoinQueryToQueryCommand;
+import org.proctosequel.main.commands.nested.JoinSqlPartToQueryCommand;
 import org.proctosequel.parsing.QueryDefCache;
 import org.proctosequel.main.exception.QueryEvalException;
 import org.proctosequel.main.utils.QueryEvalHelper;
@@ -43,27 +44,15 @@ public class EvaluateQueryCommand implements Command{
             for(TableJoinExpr tableJoinExpr : query.getTableJoinExprs()){
                 if(tableJoinExpr.getTable()!=null){
                     ProcToSequelGrammarParser.SqlPartContext sqlPartContext = ProctosequelHelper.parseSqlPart(tableJoinExpr.getTable().getExpr());
-                    if(QueryParseHelper.hasSelectStmt(sqlPartContext)){
-                        String expr = QueryEvalHelper.evaluateNestedQueries(sqlPartContext);
-                        TableJoinExpr tableJoinExpr1 = new TableJoinExpr();
-                        tableJoinExpr1.setTable(new Table(tableJoinExpr.getTable().getAlias(), expr));
-                        result.getTableJoinExprs().add(tableJoinExpr1);
-                    }else if(QueryParseHelper.isQueryIdentifier(sqlPartContext)){
-                        Query nested = QueryDefCache.getInstance().getQueries().get(sqlPartContext.getText());
-                        nested = QueryEvalHelper.evaluateQuery(nested);
-                        queryEvalContext.evaluatedQueries.put(sqlPartContext.getText(), nested);
-                        JoinQueryToQueryCommand joinQueryToQueryCommand = new JoinQueryToQueryCommand(queryEvalContext, nested);
-                        joinQueryToQueryCommand.execute();
-                    }else {
-                        result.getTableJoinExprs().add(tableJoinExpr);
-                    }
+                    JoinSqlPartToQueryCommand joinSqlPartToQueryCommand = new JoinSqlPartToQueryCommand(queryEvalContext, sqlPartContext, tableJoinExpr.getTable().getAlias());
+                    joinSqlPartToQueryCommand.execute();
                 }else {
-                    for(JoinExp joinExp : tableJoinExpr.getJoinExps()){
+//                    for(JoinExp joinExp : tableJoinExpr.getJoinExps()){
                         
-                        JoinQueryToJoinExprCommand joinQueryToJoinExprCommand = new JoinQueryToJoinExprCommand(joinExp, result);
-                        joinQueryToJoinExprCommand.execute();
+//                        JoinQueryToJoinExprCommand joinQueryToJoinExprCommand = new JoinQueryToJoinExprCommand(joinExp, result);
+//                        joinQueryToJoinExprCommand.execute();
                         
-                    }
+//                    }
                 }
             }
 
