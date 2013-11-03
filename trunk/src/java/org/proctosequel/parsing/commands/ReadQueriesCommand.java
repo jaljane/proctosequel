@@ -9,7 +9,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.parsing.commands.nested.ParseQueryCommand;
 import org.proctosequel.parsing.exception.SyntaxError;
 import org.proctosequel.parsing.om.Query;
-import org.proctosequel.parsing.utils.Errors;
+import org.proctosequel.utils.Errors;
 
 /**
  *

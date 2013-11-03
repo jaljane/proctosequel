@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
-import org.proctosequel.parsing.utils.Constants;
+import org.proctosequel.utils.Constants;
 
 /**
  *

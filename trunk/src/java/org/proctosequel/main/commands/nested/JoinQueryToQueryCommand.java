@@ -8,6 +8,7 @@ import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
+import org.proctosequel.utils.Constants;
 
 /**
  *
@@ -15,7 +16,7 @@ import org.proctosequel.parsing.om.composite.TableJoinExpr;
  */
 public class JoinQueryToQueryCommand implements Command{
 
-    private static String ALIAS_PERFIX = "pts_t";
+    
     private EvaluateQueryCommand.QueryEvalContext queryEvalContext;
     private Query nested;
 
@@ -28,17 +29,17 @@ public class JoinQueryToQueryCommand implements Command{
     
     @Override
     public void execute() {
-        Query query = queryEvalContext.getQuery();
-        Query result = queryEvalContext.getResult();
+        Query query = getQueryEvalContext().getQuery();
+        Query result = getQueryEvalContext().getResult();
         String aliasBuffer = null;
         if(query.getGroupBy() == null && nested.getGroupBy() ==null ){
             for(TableJoinExpr tableJoinExpr : nested.getTableJoinExprs()){
                 if(tableJoinExpr.getTable()!=null){
                     TableJoinExpr tableJoinExpr1 = new TableJoinExpr();
-                    queryEvalContext.setAliasCounter(queryEvalContext.getAliasCounter()+1);
-                    aliasBuffer = ALIAS_PERFIX + queryEvalContext.getAliasCounter();
+                    getQueryEvalContext().setAliasCounter(getQueryEvalContext().getAliasCounter()+1);
+                    aliasBuffer = Constants.ALIAS_PERFIX + getQueryEvalContext().getAliasCounter();
                     tableJoinExpr1.setTable(new Table(aliasBuffer , tableJoinExpr.getTable().getExpr()));
-                    queryEvalContext.getTableAliases().put(aliasBuffer, tableJoinExpr.getTable());      
+                    getQueryEvalContext().getTableAliases().put(aliasBuffer, tableJoinExpr.getTable());      
                     result.getTableJoinExprs().add(tableJoinExpr);
                 }else {
                     TableJoinExpr tableJoinExpr1 = new TableJoinExpr();
@@ -46,17 +47,17 @@ public class JoinQueryToQueryCommand implements Command{
                         JoinExp joinExp1 = new JoinExp();
                         List<Table> lefts = tableJoinExpr.getJoinExps().get(j).getLeftTables();
                         for(int k=0;k<lefts.size();k++){
-                            queryEvalContext.setAliasCounter(queryEvalContext.getAliasCounter()+1);
-                            aliasBuffer = ALIAS_PERFIX + queryEvalContext.getAliasCounter();                            
+                            getQueryEvalContext().setAliasCounter(getQueryEvalContext().getAliasCounter()+1);
+                            aliasBuffer = Constants.ALIAS_PERFIX + getQueryEvalContext().getAliasCounter();                            
                             joinExp1.getLeftTables().add(new Table(aliasBuffer , lefts.get(k).getExpr())); 
-                            queryEvalContext.getTableAliases().put(aliasBuffer, lefts.get(k));                            
+                            getQueryEvalContext().getTableAliases().put(aliasBuffer, lefts.get(k));                            
                         }
                         
-                        queryEvalContext.setAliasCounter(queryEvalContext.getAliasCounter()+1);
+                        getQueryEvalContext().setAliasCounter(getQueryEvalContext().getAliasCounter()+1);
                         Table rightTable=tableJoinExpr.getJoinExps().get(j).getRightTable();
-                        aliasBuffer = ALIAS_PERFIX + queryEvalContext.getAliasCounter();
+                        aliasBuffer = Constants.ALIAS_PERFIX + getQueryEvalContext().getAliasCounter();
                         joinExp1.setRightTable(new Table(aliasBuffer, rightTable.getExpr()));
-                        queryEvalContext.getTableAliases().put(aliasBuffer, rightTable); 
+                        getQueryEvalContext().getTableAliases().put(aliasBuffer, rightTable); 
                         
                         List<Condition> conditions = tableJoinExpr.getJoinExps().get(j).getConditions();
                         for(int k=0;k<conditions.size();k++){
@@ -71,6 +72,13 @@ public class JoinQueryToQueryCommand implements Command{
             }
             
         }
+    }
+
+    /**
+     * @return the queryEvalContext
+     */
+    public EvaluateQueryCommand.QueryEvalContext getQueryEvalContext() {
+        return queryEvalContext;
     }
 
 

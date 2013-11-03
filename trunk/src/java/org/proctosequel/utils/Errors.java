@@ -1,5 +1,5 @@
 
-package org.proctosequel.parsing.utils;
+package org.proctosequel.utils;
 
 /**
  *

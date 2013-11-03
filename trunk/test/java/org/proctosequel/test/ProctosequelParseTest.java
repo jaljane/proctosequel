@@ -10,7 +10,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.parsing.commands.ReadExportQueryCommand;
 import org.proctosequel.parsing.commands.ReadExportResultCommand;
 import org.proctosequel.parsing.commands.ReadQueriesCommand;
-import org.proctosequel.parsing.utils.Constants;
+import org.proctosequel.utils.Constants;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
 import org.proctosequel.utils.FileHelper;
 

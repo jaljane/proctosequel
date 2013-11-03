@@ -8,7 +8,7 @@ import org.proctosequel.antlr.ProcToSequelGrammarParser.InstContext;
 import org.proctosequel.parsing.exception.SemanticsError;
 import org.proctosequel.parsing.om.ExportQuery;
 import org.proctosequel.parsing.visitors.VarNamesVisitor;
-import org.proctosequel.parsing.utils.Errors;
+import org.proctosequel.utils.Errors;
 
 /**
  *
