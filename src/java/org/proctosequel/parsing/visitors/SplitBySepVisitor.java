@@ -6,7 +6,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.ProcToSequelGrammarBaseVisitor;
-import org.proctosequel.parsing.utils.Constants;
+import org.proctosequel.utils.Constants;
 
 /**
  *

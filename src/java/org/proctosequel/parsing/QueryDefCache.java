@@ -17,7 +17,7 @@ import org.proctosequel.parsing.commands.ReadQueriesCommand;
 import org.proctosequel.parsing.om.ExportQuery;
 import org.proctosequel.parsing.om.ExportResult;
 import org.proctosequel.parsing.om.Query;
-import org.proctosequel.parsing.utils.Constants;
+import org.proctosequel.utils.Constants;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
 import org.proctosequel.utils.FileHelper;
 
