@@ -15,6 +15,7 @@ import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.JoinExp;
+import org.proctosequel.parsing.om.composite.RowSet;
 import org.proctosequel.parsing.om.composite.Table;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
@@ -88,9 +89,9 @@ public class EvaluateQueryCommand implements Command{
     public static class QueryEvalContext {
         private Query query;
         private Query result;    
-        private Map<String, Table> tableAliases = new HashMap<>();
+        private Map<String, RowSet> tableAliases = new HashMap<>();
         private Map<String, Query> evaluatedQueries = new HashMap<>();   
-        private Map<Query, List<Table>> tableMapping = new HashMap<>();
+        private Map<Query, List<RowSet>> tableMapping = new HashMap<>();
         private int aliasCounter = 0;
 
         public QueryEvalContext(Query query, Query result) {
@@ -134,14 +135,14 @@ public class EvaluateQueryCommand implements Command{
         /**
          * @return the tableAliases
          */
-        public Map<String, Table> getTableAliases() {
+        public Map<String, RowSet> getTableAliases() {
             return tableAliases;
         }
 
         /**
          * @param tableAliases the tableAliases to set
          */
-        public void setTableAliases(Map<String, Table> tableAliases) {
+        public void setTableAliases(Map<String, RowSet> tableAliases) {
             this.tableAliases = tableAliases;
         }
 
@@ -162,14 +163,14 @@ public class EvaluateQueryCommand implements Command{
         /**
          * @return the tableMapping
          */
-        public Map<Query, List<Table>> getTableMapping() {
+        public Map<Query, List<RowSet>> getTableMapping() {
             return tableMapping;
         }
 
         /**
          * @param tableMapping the tableMapping to set
          */
-        public void setTableMapping(Map<Query, List<Table>> tableMapping) {
+        public void setTableMapping(Map<Query, List<RowSet>> tableMapping) {
             this.tableMapping = tableMapping;
         }
 

@@ -3,6 +3,7 @@ package org.proctosequel.main.commands.nested;
 import java.util.List;
 import org.proctosequel.Command;
 import org.proctosequel.main.commands.EvaluateQueryCommand;
+import org.proctosequel.main.utils.QueryEvalHelper;
 import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.JoinExp;
@@ -71,6 +72,15 @@ public class JoinQueryToQueryCommand implements Command{
                 
             }
             
+        }else {
+            TableJoinExpr tableJoinExpr = new TableJoinExpr();
+            EvaluateQueryCommand evaluateQueryCommand = new EvaluateQueryCommand(nested);
+            evaluateQueryCommand.execute();
+            Query nested = evaluateQueryCommand.getResult();
+            getQueryEvalContext().setAliasCounter(getQueryEvalContext().getAliasCounter()+1);
+            aliasBuffer = Constants.ALIAS_PERFIX + getQueryEvalContext().getAliasCounter();                                        
+            tableJoinExpr.setTable(new Table(aliasBuffer, nested.getSQL()));
+            getQueryEvalContext().getTableAliases().put(aliasBuffer, nested);   
         }
     }
 

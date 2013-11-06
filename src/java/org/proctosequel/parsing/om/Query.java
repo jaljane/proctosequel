@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
 import org.proctosequel.parsing.om.composite.GroupBy;
+import org.proctosequel.parsing.om.composite.RowSet;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.visitors.AddSpaceVisitor;
 
@@ -14,7 +15,7 @@ import org.proctosequel.parsing.visitors.AddSpaceVisitor;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class Query {
+public class Query implements RowSet{
     private String identifier;    
     private ParseTree selectPart;    
     private ParseTree fromPart;
@@ -186,6 +187,11 @@ public class Query {
             sql+=", " + conditions.get(i).getSQL();
         }
         return sql;
+    }
+
+    @Override
+    public String getQualifier() {
+        return identifier;
     }
     
    
