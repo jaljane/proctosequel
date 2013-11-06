@@ -8,7 +8,7 @@ import org.proctosequel.main.db.om.DbColumn;
  *
  * @author Jamel Aljane <aljane.jamel@gmail.com>
  */
-public class Table extends AliasedData{
+public class Table extends AliasedData implements RowSet{
 
     private List<DbColumn> metadata; 
     
@@ -37,6 +37,11 @@ public class Table extends AliasedData{
     public String getSQL (){
         return getExpr() + " " + (getAlias()==null?"":getAlias());
     }    
+
+    @Override
+    public String getQualifier() {
+        return getAlias();
+    }
     
     
 }
