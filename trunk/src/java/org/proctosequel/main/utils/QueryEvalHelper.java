@@ -1,19 +1,13 @@
 package org.proctosequel.main.utils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.proctosequel.antlr.ProcToSequelGrammarParser;
 import org.proctosequel.main.commands.EvaluateQueryCommand;
 import org.proctosequel.parsing.commands.nested.ParseQueryCommand;
 import org.proctosequel.parsing.om.Query;
-import org.proctosequel.parsing.om.composite.Condition;
-import org.proctosequel.parsing.om.composite.JoinExp;
-import org.proctosequel.parsing.om.composite.Table;
-import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.visitors.StoreNestedQueriesVisitor;
-import org.proctosequel.utils.Constants;
 
 /**
  *
