@@ -55,10 +55,6 @@ public class CollectionHelper {
                 add("b1");
                 add("b2");
                 add("b3");
-                add("b3");
-                add("b3");
-                add("b3");
-                add("b3");
             }}  
         });
         System.out.println(Arrays.deepToString(result));

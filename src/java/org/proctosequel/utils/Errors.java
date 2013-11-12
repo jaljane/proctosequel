@@ -17,4 +17,5 @@ public interface Errors {
     String bad_or_unsupported_eq_match = "varname %s - bad equal match.";
     String bad_or_unsupported_groupby = "varname %s - bad group by fragment.";
     String bad_or_unsupported_logic_condition = "varname %s - bad condition fragment.";
+    
 }
