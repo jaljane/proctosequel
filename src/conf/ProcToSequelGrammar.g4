@@ -1,0 +1,33 @@
+grammar ProcToSequelGrammar;
+prog : inst (inst)* EOF;
+inst : setvar SEMICOLON | exportToFunction SEMICOLON | exportToTable SEMICOLON;
+setvar : VarName OP_ASSIGN selectStmt ;
+exportToFunction : 'exportQuery' '(' VarName ')';
+exportToTable : 'exportResult' '(' VarName ')' 'to' Word ('primaryKey' expr)? ;
+selectStmt :  'select' sqlPart 'from' sqlPart ( 'where' sqlPart )? ( 'group' 'by' sqlPart )? | '(' selectStmt ')';
+sqlPart : (expr | selectStmt) (PUNCT? (expr | selectStmt))*;
+expr : (Word | VarName | ParamName | STRING | '(' expr+ ')' ) (PUNCT? ( Word | VarName | ParamName | STRING | '(' expr+ ')' ) )* ;
+VarName : '$' Word;
+ParamName : ':' Word;
+Word :  ([a-zA-Z0-9_\.]+ | MULTIPLY_OP );
+PUNCT : (OP_EQ | COMMA | GREATER | LOWER | GREATER_EQUAL | LOWER_EQUAL | DIFFERENT | PLUS_OP | MINUS_OP | MULTIPLY_OP | DIVIDE_OP );
+OP_ASSIGN : ':=' ;
+OP_EQ : '=' ;
+COMMA : ',';
+GREATER : '>';
+LOWER : '<';
+PLUS_OP : '+';
+MINUS_OP : '-';
+MULTIPLY_OP : '*';
+DIVIDE_OP : '/';
+fragment GREATER_EQUAL : GREATER OP_EQ;
+fragment LOWER_EQUAL : LOWER OP_EQ;
+fragment DIFFERENT : LOWER GREATER;
+SEMICOLON : ';';
+STRING : '"' ( '\\"' | . )*? '"' | '\'' ( '\\\'' | . )*? '\''  ;
+MULTIPLE_LINE_COMMENT_BLOCK : DIVIDE_OP MULTIPLY_OP (.)*? MULTIPLY_OP DIVIDE_OP  -> skip ;
+ONE_LINE_COMMENT_BLOCK : MINUS_OP MINUS_OP (.)*? NEW_LINE -> skip ;
+NEW_LINE : [\n]+;
+WS : [ \t\r\n]+ -> skip ;
+
+
