@@ -25,8 +25,9 @@ public class Query implements RowSet{
     private List<TableJoinExpr> tableJoinExprs = new ArrayList<>();
     private List<Condition> conditions = new ArrayList<>();
     private GroupBy groupBy;
-//    private Eva
-
+    
+    
+    
     public Query() {
     }
 
@@ -105,6 +106,15 @@ public class Query implements RowSet{
      */
     public void setGroupPart(ParseTree groupPart) {
         this.groupPart = groupPart;
+    }
+    
+    public boolean joinableWhenNested (){
+        for(TableJoinExpr tableJoinExpr : tableJoinExprs){
+            if(tableJoinExpr.getTable()==null && !tableJoinExpr.getJoinExps().isEmpty()){
+                return false;
+            }
+        }
+        return true;
     }
     
     @Override

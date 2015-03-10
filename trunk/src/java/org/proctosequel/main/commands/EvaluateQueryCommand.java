@@ -11,6 +11,7 @@ import org.proctosequel.main.utils.QueryEvalHelper;
 import org.proctosequel.parsing.om.Query;
 import org.proctosequel.parsing.om.composite.Column;
 import org.proctosequel.parsing.om.composite.Condition;
+import org.proctosequel.parsing.om.composite.JoinExp;
 import org.proctosequel.parsing.om.composite.RowSet;
 import org.proctosequel.parsing.om.composite.TableJoinExpr;
 import org.proctosequel.parsing.utils.ProctosequelHelper;
@@ -43,12 +44,18 @@ public class EvaluateQueryCommand implements Command{
                     JoinSqlPartToQueryCommand joinSqlPartToQueryCommand = new JoinSqlPartToQueryCommand(queryEvalContext, sqlPartContext, tableJoinExpr.getTable().getAlias());
                     joinSqlPartToQueryCommand.execute();
                 }else {
-//                    for(JoinExp joinExp : tableJoinExpr.getJoinExps()){
+                    JoinExp joinExp = tableJoinExpr.getJoinExps().get(0);
+                    JoinExp newJoinExp = new JoinExp();
+                    ProcToSequelGrammarParser.SqlPartContext sqlPartContext = ProctosequelHelper.parseSqlPart(joinExp.getLeftTables().get(0).getExpr());
+                    JoinSqlPartToQueryCommand joinSqlPartToQueryCommand = new JoinSqlPartToQueryCommand(queryEvalContext, sqlPartContext, tableJoinExpr.getTable().getAlias());
+                    joinSqlPartToQueryCommand.execute();
+                    
+                    for(int i=1;i<tableJoinExpr.getJoinExps().size();i++){
                         
 //                        JoinQueryToJoinExprCommand joinQueryToJoinExprCommand = new JoinQueryToJoinExprCommand(joinExp, result);
 //                        joinQueryToJoinExprCommand.execute();
                         
-//                    }
+                    }
                 }
             }
 
