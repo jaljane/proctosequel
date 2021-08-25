@@ -5,4 +5,4 @@
         source: { repository: busybox }
       run:
         path: ls
-        args: ["-la", "./concourse-docs-git"]
+        args: ["-la", "./proc-to-sequel-git"]
